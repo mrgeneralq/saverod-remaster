@@ -55,6 +55,6 @@ public class Rod {
         this.abilities.forEach(ability -> ability.activate(player));
     }
 
-    
+
 
 }
