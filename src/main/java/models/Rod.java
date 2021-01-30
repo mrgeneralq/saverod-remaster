@@ -51,10 +51,10 @@ public class Rod {
         this.lore = lore;
     }
 
-    void activateAbilities(Player player){
-        this.abilities.forEach(ability -> ability.activate(player));
+    void activate(Player player) {
+
+        for(Ability ability : this.abilities) {
+            ability.activate(player);
+        }
     }
-
-
-
 }
