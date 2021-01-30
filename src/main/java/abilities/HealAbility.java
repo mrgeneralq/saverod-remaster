@@ -3,6 +3,9 @@ package abilities;
 import models.Ability;
 import models.Rod;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 
 public class HealAbility extends Ability
 {
@@ -19,9 +22,12 @@ public class HealAbility extends Ability
     }
 
     @Override
-    public void activate(Player player)
+    public void activateWithin(EntityDamageEvent e)
     {
-        //the maximum hp is 20
+        /// we will already check if it was plaer
+        Player player = (Player) e.getEntity();
+
+
         double newHealth = Math.min(20, player.getHealth() + this.healthToHeal);
 
         player.setHealth(newHealth);

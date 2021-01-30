@@ -1,6 +1,9 @@
 package models;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 
 public abstract class Ability {
 
@@ -12,7 +15,8 @@ public abstract class Ability {
         this.name = name;
     }
 
-    public abstract void activate(Player player);
+    public abstract void activateWithin(PlayerDeathEvent event);
+    public abstract void activateWithin(EntityDamageEvent event);
 
     public Rod getRod() {
         return rod;

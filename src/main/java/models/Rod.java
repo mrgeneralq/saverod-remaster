@@ -2,6 +2,7 @@ package models;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,10 +52,10 @@ public class Rod {
         this.lore = lore;
     }
 
-    void activate(Player player) {
+    public void activate(Event e) {
 
         for(Ability ability : this.abilities) {
-            ability.activate(player);
+            ability.activate(e);
         }
     }
 }
