@@ -1,31 +1,33 @@
-package models;
+package com.pseudonova.saverod.models;
 
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Rod {
+
     private final String name = "";
+    private boolean mustBeHeld;
+    private final List<Ability> abilities = new ArrayList<>();
+
+    //item's data
     private String displayName = "";
     private Material material = Material.BLAZE_ROD;
     private List<String> lore = new ArrayList<>();
-    private final List<Ability> abilities = new ArrayList<>();
 
-    public Rod(String displayName) {
-
-        //abilities are added here
-
-
+    public Rod(String displayName, boolean mustBeHeld) {
         this.displayName = displayName;
+        this.mustBeHeld = mustBeHeld;
     }
-
 
     public String getName() {
         return name;
+    }
+
+    public boolean mustBeHeld(){
+        return this.mustBeHeld;
     }
 
     public String getDisplayName() {
@@ -57,10 +59,9 @@ public class Rod {
     }
 
     public void activateWithin(Event event) {
-        Class<? extends Event> eventClass = event.getClass();
 
         this.abilities.stream()
-                .filter(ability -> ability.isSupportedEvent(eventClass))
+                .filter(ability -> ability.isSupportedEvent(event))
                 .forEach(ability -> ability.activateWithin(event));
     }
 }

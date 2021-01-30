@@ -1,9 +1,7 @@
-package abilities;
+package com.pseudonova.saverod.abilities;
 
-import models.Ability;
-import models.Rod;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
+import com.pseudonova.saverod.models.Ability;
+import com.pseudonova.saverod.models.Rod;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 public class HealAbility extends Ability
@@ -15,25 +13,16 @@ public class HealAbility extends Ability
 
         this.healthToHeal = healthToHeal;
 
-        supportEvent(EntityDamageEvent.class);
+        when(EntityDamageEvent.class, event -> {
+
+            //reduce the damage by the health to heal
+            double newDamage = Math.max(0, event.getDamage() - this.healthToHeal);
+
+            event.setDamage(newDamage);
+        });
     }
 
     public double getHealingHealth() {
         return this.healthToHeal;
-    }
-
-    @Override
-    public void activateWithin(Event event)
-    {
-       Player player = getPlayer(event);
-       double newHealth = Math.min(20, player.getHealth() + this.healthToHeal);
-
-       player.setHealth(newHealth);
-    }
-
-    private Player getPlayer(Event event){
-        EntityDamageEvent damageEvent = (EntityDamageEvent) event;
-
-        return (Player) damageEvent.getEntity();
     }
 }

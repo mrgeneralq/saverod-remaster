@@ -8,7 +8,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerEvent;
 
 public class AbilitiesListeners implements Listener
 {
@@ -31,16 +30,11 @@ public class AbilitiesListeners implements Listener
         this.testRod.activateWithin(event);
     }
 
-    private void activateRod(Event event){
+    //Testings, don't touch
+
+    /*private void activateRod(Event event){
 
         if(this.)
-
-
-
-
-
-
-
 
 
         Player player = null;
@@ -59,5 +53,5 @@ public class AbilitiesListeners implements Listener
             return;
 
         this.testRod.activateWithin(event);
-    }
+    }*/
 }

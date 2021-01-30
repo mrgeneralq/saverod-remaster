@@ -1,9 +1,8 @@
-package abilities;
+package com.pseudonova.saverod.abilities;
 
-import models.Ability;
-import models.Rod;
+import com.pseudonova.saverod.models.Ability;
+import com.pseudonova.saverod.models.Rod;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 public class FeedAbility extends Ability
@@ -15,31 +14,21 @@ public class FeedAbility extends Ability
 
         this.foodLevel = foodLevel;
 
-        supportEvent(EntityDamageEvent.class);
+        when(EntityDamageEvent.class, event -> {
+
+            //cancel the event
+            event.setCancelled(true);
+
+            Player player = (Player) event.getEntity();
+
+            //the max food level is 20
+            int newFoodLevel = Math.min(20, player.getFoodLevel() + this.foodLevel);
+
+            player.setFoodLevel(newFoodLevel);
+        });
     }
 
     public double getFoodLevel() {
         return this.foodLevel;
-    }
-
-    @Override
-    public void activateWithin(Event event)
-    {
-        EntityDamageEvent damageEvent = (EntityDamageEvent) event;
-        Player player = getPlayer(event);
-
-        //cancel the event
-        damageEvent.setCancelled(true);
-
-        //the food level is 20
-        int newFoodLevel = Math.min(20, player.getFoodLevel() + this.foodLevel);
-
-        player.setFoodLevel(newFoodLevel);
-    }
-
-    private Player getPlayer(Event event){
-        EntityDamageEvent damageEvent = (EntityDamageEvent) event;
-
-        return (Player) damageEvent.getEntity();
     }
 }

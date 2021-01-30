@@ -1,6 +1,6 @@
-package abilities;
+package com.pseudonova.saverod.abilities;
 
-import models.Rod;
+import com.pseudonova.saverod.models.Rod;
 
 public class SurviveAbility extends HealAbility
 {
