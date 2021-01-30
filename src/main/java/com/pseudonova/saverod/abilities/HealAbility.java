@@ -5,7 +5,6 @@ import models.Rod;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 
 public class HealAbility extends Ability
 {
@@ -15,6 +14,8 @@ public class HealAbility extends Ability
         super(rod, "heal");
 
         this.healthToHeal = healthToHeal;
+
+        supportEvent(EntityDamageEvent.class);
     }
 
     public double getHealingHealth() {
@@ -22,14 +23,17 @@ public class HealAbility extends Ability
     }
 
     @Override
-    public void activateWithin(EntityDamageEvent e)
+    public void activateWithin(Event event)
     {
-        /// we will already check if it was plaer
-        Player player = (Player) e.getEntity();
+       Player player = getPlayer(event);
+       double newHealth = Math.min(20, player.getHealth() + this.healthToHeal);
 
+       player.setHealth(newHealth);
+    }
 
-        double newHealth = Math.min(20, player.getHealth() + this.healthToHeal);
+    private Player getPlayer(Event event){
+        EntityDamageEvent damageEvent = (EntityDamageEvent) event;
 
-        player.setHealth(newHealth);
+        return (Player) damageEvent.getEntity();
     }
 }

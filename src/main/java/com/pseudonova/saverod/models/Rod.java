@@ -52,10 +52,15 @@ public class Rod {
         this.lore = lore;
     }
 
-    public void activate(Event e) {
+    public void addAbility(Ability ability){
+        this.abilities.add(ability);
+    }
 
-        for(Ability ability : this.abilities) {
-            ability.activate(e);
-        }
+    public void activateWithin(Event event) {
+        Class<? extends Event> eventClass = event.getClass();
+
+        this.abilities.stream()
+                .filter(ability -> ability.isSupportedEvent(eventClass))
+                .forEach(ability -> ability.activateWithin(event));
     }
 }

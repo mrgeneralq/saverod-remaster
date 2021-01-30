@@ -14,6 +14,8 @@ public class FeedAbility extends Ability
         super(rod, "feed");
 
         this.foodLevel = foodLevel;
+
+        supportEvent(EntityDamageEvent.class);
     }
 
     public double getFoodLevel() {
@@ -21,24 +23,23 @@ public class FeedAbility extends Ability
     }
 
     @Override
-    public void activateWithin(Event e)
+    public void activateWithin(Event event)
     {
-        //here is where I most likely need your abstraction powers
+        EntityDamageEvent damageEvent = (EntityDamageEvent) event;
+        Player player = getPlayer(event);
 
-        if(!(e instanceof EntityDamageEvent))
-            return;
-
-        // this will only run when the event type was Damage, so we can still set food levels
-
-        EntityDamageEvent event = (EntityDamageEvent) e;
-
-        event.setCancelled(true);
-
-
+        //cancel the event
+        damageEvent.setCancelled(true);
 
         //the food level is 20
         int newFoodLevel = Math.min(20, player.getFoodLevel() + this.foodLevel);
 
         player.setFoodLevel(newFoodLevel);
+    }
+
+    private Player getPlayer(Event event){
+        EntityDamageEvent damageEvent = (EntityDamageEvent) event;
+
+        return (Player) damageEvent.getEntity();
     }
 }
