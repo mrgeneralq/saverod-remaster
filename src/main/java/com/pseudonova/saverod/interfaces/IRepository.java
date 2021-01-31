@@ -1,4 +1,4 @@
-package com.pseudonova.saverod.repositories;
+package com.pseudonova.saverod.interfaces;
 
 public interface IRepository<K, V>
 {
