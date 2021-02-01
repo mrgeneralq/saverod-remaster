@@ -27,14 +27,14 @@ public class RodRepository implements IRepository<String, Rod> {
 
         Map<String, Object> serializedObject = rod.serialize();
 
-        getConfig().set(getPath(rodName), serializedObject);
+        getConfig().set(getRodPath(rodName), serializedObject);
         saveConfig();
 
     }
 
     @Override
     public boolean containsKey(String rodName) {
-        return getConfig().contains(getPath(rodName));
+        return getConfig().contains(getRodPath(rodName));
     }
 
     @Override
@@ -75,7 +75,7 @@ public class RodRepository implements IRepository<String, Rod> {
         return this.rodConfiguration;
     }
 
-    private String getPath(String rodName){
+    private String getRodPath(String rodName){
         return String.format("rods.%s", rodName.toLowerCase());
     }
 }

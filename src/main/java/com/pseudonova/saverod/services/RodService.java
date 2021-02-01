@@ -1,29 +1,22 @@
 package com.pseudonova.saverod.services;
 
 import com.pseudonova.saverod.SaveRod;
-import com.pseudonova.saverod.interfaces.IRepository;
 import com.pseudonova.saverod.interfaces.IRodService;
 import com.pseudonova.saverod.models.Rod;
 import com.pseudonova.saverod.repositories.RodRepository;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.Objects;
-
 public class RodService implements IRodService
 {
-    private final SaveRod main;
     private final RodRepository rodRepository;
-
-    private final NamespacedKey ROD_KEY;
+    private final NamespacedKey rodKey;
 
     public RodService(SaveRod main , RodRepository rodRepository) {
-        this.main = main;
         this.rodRepository = rodRepository;
-        this.ROD_KEY = new NamespacedKey(main, "rod");
+        this.rodKey = new NamespacedKey(main, "rod");
     }
 
     @Override
@@ -32,32 +25,35 @@ public class RodService implements IRodService
         if(!item.hasItemMeta())
             return false;
 
-        PersistentDataContainer dataContainer = Objects.requireNonNull(item.getItemMeta()).getPersistentDataContainer();
+        PersistentDataContainer dataContainer = item.getItemMeta().getPersistentDataContainer();
 
-        if(!dataContainer.has(this.ROD_KEY, PersistentDataType.STRING))
+        if(!dataContainer.has(this.rodKey, PersistentDataType.STRING))
             return false;
 
-        String rodName = dataContainer.get(this.ROD_KEY, PersistentDataType.STRING);
-        return rodRepository.containsKey(rodName);
+        String rodName = dataContainer.get(this.rodKey, PersistentDataType.STRING);
+
+        return this.rodRepository.containsKey(rodName);
 
     }
 
     @Override
     public boolean rodExists(String name){
-        return rodRepository.containsKey(name);
+        return this.rodRepository.containsKey(name);
     }
 
     @Override
     public Rod getRod(ItemStack rodItem) {
-        PersistentDataContainer dataContainer = Objects.requireNonNull(rodItem.getItemMeta()).getPersistentDataContainer();
-        String rodName = dataContainer.get(this.ROD_KEY, PersistentDataType.STRING);
+        if(!isRod(rodItem))
+            return null;
 
-        return rodRepository.getValue(rodName);
+        String rodName = rodItem.getItemMeta().getPersistentDataContainer().get(this.rodKey, PersistentDataType.STRING);
 
+        return this.rodRepository.getValue(rodName);
     }
 
     @Override
     public void createRod(String name, Rod rod){
-        rodRepository.addOrUpdate(name, rod);
+        this.rodRepository.addOrUpdate(name, rod);
     }
+
 }

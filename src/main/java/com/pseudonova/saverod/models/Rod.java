@@ -1,7 +1,6 @@
 package com.pseudonova.saverod.models;
 
 import org.bukkit.Material;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.event.Event;
 
 import java.util.ArrayList;
@@ -9,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Rod implements ConfigurationSerializable {
+public class Rod {
 
     private final String name;
     private boolean mustBeHeld = false;
@@ -82,7 +81,6 @@ public class Rod implements ConfigurationSerializable {
                 .forEach(ability -> ability.activateWithin(event));
     }
 
-    @Override
     public Map<String, Object> serialize() {
 
         Map<String, Object> serializedObject = new HashMap<>();
