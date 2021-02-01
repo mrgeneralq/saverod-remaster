@@ -2,12 +2,11 @@ package com.pseudonova.saverod.eventlisteners;
 
 import com.pseudonova.saverod.models.Rod;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 
 public class AbilitiesListeners implements Listener
 {
@@ -19,14 +18,19 @@ public class AbilitiesListeners implements Listener
 
     @EventHandler
     public void on(EntityDamageEvent event){
-        if(event.getEntityType() != EntityType.PLAYER)
-            return;
 
-        this.testRod.activateWithin(event);
+        //activate the rod only if the damaged entity is a player
+        if(event.getEntityType() == EntityType.PLAYER)
+            this.testRod.activateWithin(event);
     }
 
     @EventHandler
     public void on(PlayerDeathEvent event){
+        this.testRod.activateWithin(event);
+    }
+
+    @EventHandler
+    public void on(PlayerRespawnEvent event){
         this.testRod.activateWithin(event);
     }
 

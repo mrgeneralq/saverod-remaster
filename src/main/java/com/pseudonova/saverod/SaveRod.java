@@ -1,6 +1,7 @@
 package com.pseudonova.saverod;
 
 import com.pseudonova.saverod.abilities.HealAbility;
+import com.pseudonova.saverod.abilities.SaveInventoryAbility;
 import com.pseudonova.saverod.eventlisteners.AbilitiesListeners;
 import com.pseudonova.saverod.interfaces.IRodService;
 import com.pseudonova.saverod.models.Rod;
@@ -11,7 +12,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class SaveRod extends JavaPlugin {
 
-    private final Rod rod = new Rod("test");
     private Bootstrapper bootstrapper;
 
     @Override
@@ -22,7 +22,7 @@ public class SaveRod extends JavaPlugin {
         vipRod.setMaterial(Material.BLAZE_ROD);
 
         this.bootstrapper = Bootstrapper.getBootstrapper();
-        bootstrapper.initialize(this);
+        this.bootstrapper.initialize(this);
 
         IRodService rodService = bootstrapper.getRodService();
 
@@ -31,10 +31,10 @@ public class SaveRod extends JavaPlugin {
 
             rodService.createRod("vip", vipRod);
         }
+        vipRod.addAbility(new HealAbility(vipRod, 4D));
+        vipRod.addAbility(new SaveInventoryAbility(vipRod));
 
-      //  this.rod.addAbility(new HealAbility(this.rod, 4D));
-        Bukkit.getPluginManager().registerEvents(new AbilitiesListeners(this.rod), this);
-
+        Bukkit.getPluginManager().registerEvents(new AbilitiesListeners(vipRod), this);
 
     }
 }
