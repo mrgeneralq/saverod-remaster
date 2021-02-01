@@ -6,11 +6,11 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.Map;
 
-public class InventoryContainer
+public class InventorySnapshot
 {
     private final Map<Integer, ItemStack> itemsInSlots = new HashMap<>();
 
-    public InventoryContainer(Inventory inv){
+    public InventorySnapshot(Inventory inv){
         cloneContentOf(inv);
     }
 
