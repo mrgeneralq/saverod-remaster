@@ -81,6 +81,7 @@ public class Rod {
                 .forEach(ability -> ability.activateWithin(event));
     }
 
+
     public Map<String, Object> serialize() {
 
         Map<String, Object> serializedObject = new HashMap<>();
