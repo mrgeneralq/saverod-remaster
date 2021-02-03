@@ -34,7 +34,7 @@ public class SaveRod extends JavaPlugin {
         vipRod.addAbility(new HealAbility(vipRod, 4D));
         vipRod.addAbility(new SaveInventoryAbility(vipRod));
 
-        Bukkit.getPluginManager().registerEvents(new AbilitiesListeners(vipRod), this);
+        Bukkit.getPluginManager().registerEvents(new AbilitiesListeners(vipRod, rodService), this);
 
     }
 }

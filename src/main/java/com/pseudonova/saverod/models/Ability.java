@@ -41,4 +41,7 @@ public abstract class Ability {
     public void unsupportEvent(Class<? extends Event> eventClass){
         this.supportedEvents.remove(eventClass);
     }
+
+    public abstract boolean hasValidParameters(String[] parameters);
+
 }

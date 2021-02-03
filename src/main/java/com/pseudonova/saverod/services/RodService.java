@@ -52,6 +52,13 @@ public class RodService implements IRodService
     }
 
     @Override
+    public Rod getRodByName(String name){
+        return rodRepository.getValue(name);
+    }
+
+
+
+    @Override
     public void createRod(String name, Rod rod){
         this.rodRepository.addOrUpdate(name, rod);
     }

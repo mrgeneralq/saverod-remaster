@@ -2,6 +2,7 @@ package com.pseudonova.saverod.repositories;
 
 import com.pseudonova.saverod.SaveRod;
 import com.pseudonova.saverod.interfaces.IRepository;
+import com.pseudonova.saverod.models.Ability;
 import com.pseudonova.saverod.models.Rod;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -13,49 +14,57 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RodRepository implements IRepository<String, Rod> {
+public class AbilityRepository implements IRepository<String, Ability> {
 
     private final SaveRod main;
     private File rodFile;
     private FileConfiguration rodConfiguration;
 
-    public RodRepository(SaveRod main) {
+    public AbilityRepository(SaveRod main) {
         this.main = main;
         createConfig();
     }
 
     @Override
-    public void addOrUpdate(String rodName, Rod rod) {
+    public void addOrUpdate(String abilityName, Ability ability) {
 
-        Map<String, Object> serializedObject = rod.serialize();
+    }
 
-        this.rodConfiguration.set(getRodPath(rodName), serializedObject);
-        saveConfig();
+
+    @Override
+    public void addOrUpdate(String abilityName, Ability value) {
 
     }
 
     @Override
-    public boolean containsKey(String rodName) {
-        return rodConfiguration.contains(getRodPath(rodName));
+    public boolean containsKey(String abilityName) {
+        return rodConfiguration.contains(getAbilityPath(abilityName));
     }
 
     @Override
-    public Rod getValue(String key) {
+    public Ability getValue(String key) {
 
-        ConfigurationSection section = this.rodConfiguration.getConfigurationSection(getRodPath(key));
+        ConfigurationSection section = this.rodConfiguration.getConfigurationSection(getAbilityPath(key));
 
-        Map<String, Object> rodData = new HashMap<>();
-        rodData.put("name", section.get("name"));
-        rodData.put("display-name", section.get("display-name"));
-        rodData.put("material", section.get("material"));
-        rodData.put("must-be-held", section.get("must-be-held"));
+        Map<String, Object> abilityData = new HashMap<>();
 
-        return new Rod(rodData);
+        /*
+         here we need some magic where we will get the correct class and put it
+
+         we need something to map the abilities so they can be used in a command to later on retrieve a list of
+         possible abilities. With the ability name specified, we also need a way to validate the input
+         thinking about the above, I would say an abstract method isValid() in the ability class and override
+         it in the extending class
+         I quickly show // you may stop me
+        */
+
+
+        return null;
     }
 
     private void createConfig() {
 
-        final String rodConfigName = "rods.yml";
+        final String rodConfigName = "abilities.yml";
 
         rodFile = new File(this.main.getDataFolder(), rodConfigName);
         if (!rodFile.exists()) {
@@ -80,7 +89,7 @@ public class RodRepository implements IRepository<String, Rod> {
         }
     }
 
-    private String getRodPath(String rodName){
-        return String.format("rods.%s", rodName.toLowerCase());
+    private String getAbilityPath(String rodName){
+        return String.format("abilities.%s", rodName.toLowerCase());
     }
 }

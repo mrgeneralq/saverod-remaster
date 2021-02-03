@@ -11,5 +11,7 @@ public interface IRodService {
 
     Rod getRod(ItemStack rodItem);
 
+    Rod getRodByName(String name);
+
     void createRod(String name, Rod rod);
 }

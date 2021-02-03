@@ -1,12 +1,14 @@
 package com.pseudonova.saverod.models;
 
+import com.pseudonova.saverod.abilities.HealAbility;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.Event;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Rod {
 
@@ -18,6 +20,9 @@ public class Rod {
     private String displayName = "";
     private Material material = Material.BLAZE_ROD;
     private List<String> lore = new ArrayList<>();
+
+    //I just show you the idea, there are improvements possible here, but it's the architectural design that matters here
+    private List<String> abilityNames = new ArrayList<>();
 
     public Rod(String name) {
         this.name = name;
@@ -34,7 +39,10 @@ public class Rod {
 
         this.material = Material.getMaterial((String) configObject.get("material"));
 
-     //   this.abilities = (List<Ability>) configObject.get("abilities");
+        // we are not going to parse
+
+
+
     }
 
 
@@ -90,9 +98,24 @@ public class Rod {
         serializedObject.put("must-be-held", this.mustBeHeld);
       //  serializedObject.put("lore", this.lore);
         serializedObject.put("material", this.material.toString());
-     //   serializedObject.put("abilities", this.abilities);
+        serializedObject.put("abilities", this.abilities);
 
         return serializedObject;
+    }
+
+    public ItemStack getItem(){
+
+        ItemStack itemStack = new ItemStack(this.material);
+
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', this.displayName));
+
+        meta.setLore(Collections.singletonList(this.abilities.stream().map(Ability::getName).collect(Collectors.joining(", "))));
+
+        itemStack.setItemMeta(meta);
+
+        return itemStack;
+
     }
 
 }

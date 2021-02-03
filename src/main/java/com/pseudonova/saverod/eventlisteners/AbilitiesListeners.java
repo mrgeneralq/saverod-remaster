@@ -1,19 +1,24 @@
 package com.pseudonova.saverod.eventlisteners;
 
+import com.pseudonova.saverod.interfaces.IRodService;
 import com.pseudonova.saverod.models.Rod;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
 public class AbilitiesListeners implements Listener
 {
     private final Rod testRod;
+    private final IRodService rodService;
 
-    public AbilitiesListeners(Rod testRod){
+    public AbilitiesListeners(Rod testRod, IRodService rodService){
         this.testRod = testRod;
+        this.rodService = rodService;
     }
 
     @EventHandler
@@ -58,4 +63,12 @@ public class AbilitiesListeners implements Listener
 
         this.testRod.activateWithin(event);
     }*/
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent e){
+
+        Player player = e.getPlayer();
+        player.getInventory().addItem(rodService.getRodByName("vip").getItem());
+
+    }
 }

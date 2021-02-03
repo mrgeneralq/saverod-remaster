@@ -5,8 +5,7 @@ import com.pseudonova.saverod.models.Rod;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 
-public class FeedAbility extends Ability
-{
+public class FeedAbility extends Ability {
     private final int foodLevel;
 
     public FeedAbility(Rod rod, int foodLevel) {
@@ -30,5 +29,21 @@ public class FeedAbility extends Ability
 
     public double getFoodLevel() {
         return this.foodLevel;
+    }
+
+    @Override
+    public boolean hasValidParameters(String[] args) {
+
+        if (args.length == 0)
+            return false;
+
+        try {
+            int valueToFeed = Integer.parseInt(args[0]);
+            if (valueToFeed > 0 && valueToFeed <= 20)
+                return true;
+            return false;
+        } catch (Exception ex) {
+            return false;
+        }
     }
 }
