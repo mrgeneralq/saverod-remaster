@@ -21,9 +21,6 @@ public class Rod {
     private Material material = Material.BLAZE_ROD;
     private List<String> lore = new ArrayList<>();
 
-    //I just show you the idea, there are improvements possible here, but it's the architectural design that matters here
-    private List<String> abilityNames = new ArrayList<>();
-
     public Rod(String name) {
         this.name = name;
     }
@@ -34,17 +31,16 @@ public class Rod {
         this.displayName = (String) configObject.get("display-name");
         this.mustBeHeld = (boolean) configObject.get("must-be-held");
 
-        //TODO add check
      //   this.lore = (List<String>) configObject.get("lore");
 
         this.material = Material.getMaterial((String) configObject.get("material"));
 
         // we are not going to parse
+        this.abilities = new ArrayList<>((List<Ability>) configObject.get("abilities"));
 
 
 
     }
-
 
     public String getName() {
         return name;
@@ -110,7 +106,7 @@ public class Rod {
         ItemMeta meta = itemStack.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', this.displayName));
 
-        meta.setLore(Collections.singletonList(this.abilities.stream().map(Ability::getName).collect(Collectors.joining(", "))));
+        meta.setLore(this.abilities.stream().map(Ability::getName).collect(Collectors.toList()));
 
         itemStack.setItemMeta(meta);
 

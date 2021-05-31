@@ -9,7 +9,7 @@ public class FeedAbility extends Ability {
     private final int foodLevel;
 
     public FeedAbility(Rod rod, int foodLevel) {
-        super(rod, "feed");
+        super( "feed");
 
         this.foodLevel = foodLevel;
 
@@ -31,6 +31,7 @@ public class FeedAbility extends Ability {
         return this.foodLevel;
     }
 
+    /*
     @Override
     public boolean hasValidParameters(String[] args) {
 
@@ -46,4 +47,5 @@ public class FeedAbility extends Ability {
             return false;
         }
     }
+     */
 }

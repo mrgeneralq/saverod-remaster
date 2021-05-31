@@ -8,8 +8,8 @@ public class HealAbility extends Ability
 {
     private final double healthToHeal;
 
-    public HealAbility(Rod rod, double healthToHeal) {
-        super(rod, "heal");
+    public HealAbility(double healthToHeal) {
+        super("heal");
 
         this.healthToHeal = healthToHeal;
 
@@ -25,4 +25,13 @@ public class HealAbility extends Ability
     public double getHealingHealth() {
         return this.healthToHeal;
     }
+
+    public static HealAbility deserialize(String[] abilityString){
+
+        double healthToHeal = Double.parseDouble(abilityString[0]);
+
+        return new HealAbility(healthToHeal);
+
+    }
+
 }

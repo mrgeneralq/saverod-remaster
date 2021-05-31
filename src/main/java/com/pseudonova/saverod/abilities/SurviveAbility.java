@@ -5,6 +5,6 @@ import com.pseudonova.saverod.models.Rod;
 public class SurviveAbility extends HealAbility
 {
     public SurviveAbility(Rod rod) {
-        super(rod, 20);
+        super(20);
     }
 }

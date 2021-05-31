@@ -12,6 +12,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
+
+import static java.util.stream.Collectors.toMap;
 
 public class RodRepository implements IRepository<String, Rod> {
 
@@ -22,6 +25,8 @@ public class RodRepository implements IRepository<String, Rod> {
     public RodRepository(SaveRod main) {
         this.main = main;
         createConfig();
+
+        loadRod();
     }
 
     @Override
@@ -78,6 +83,12 @@ public class RodRepository implements IRepository<String, Rod> {
         } catch (IOException exception) {
             exception.printStackTrace();
         }
+    }
+
+    private void loadRod(){
+        ConfigurationSection section = this.rodConfiguration.getConfigurationSection(getRodPath("vip"));
+        Map<String, Object> map = section.getKeys(false).stream().collect(toMap(Function.identity(), section::get));
+        System.out.println(map);
     }
 
     private String getRodPath(String rodName){

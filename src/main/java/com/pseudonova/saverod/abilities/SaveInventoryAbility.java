@@ -5,8 +5,8 @@ import com.pseudonova.saverod.models.Rod;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
 public class SaveInventoryAbility extends Ability {
-    public SaveInventoryAbility(Rod rod) {
-        super(rod, "save-inventory");
+    public SaveInventoryAbility() {
+        super( "save-inventory");
 
         when(PlayerDeathEvent.class, event -> event.setKeepInventory(true));
     }
