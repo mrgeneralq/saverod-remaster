@@ -1,6 +1,6 @@
 package com.pseudonova.saverod.models;
 
-import com.pseudonova.saverod.abilities.HealAbility;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.Event;
@@ -28,18 +28,11 @@ public class Rod {
 
     public Rod(Map<String, Object> configObject){
         this.name = (String) configObject.get("name");
-        this.displayName = (String) configObject.get("display-name");
         this.mustBeHeld = (boolean) configObject.get("must-be-held");
-
-     //   this.lore = (List<String>) configObject.get("lore");
-
+        this.displayName = (String) configObject.get("display-name");
         this.material = Material.getMaterial((String) configObject.get("material"));
-
-        // we are not going to parse
-        this.abilities = new ArrayList<>((List<Ability>) configObject.get("abilities"));
-
-
-
+        this.lore = (List<String>) configObject.get("lore");
+        this.abilities = (List<Ability>) configObject.get("abilities");
     }
 
     public String getName() {
@@ -90,11 +83,12 @@ public class Rod {
 
         Map<String, Object> serializedObject = new HashMap<>();
 
+        serializedObject.put("name", this.name);
         serializedObject.put("display-name", this.displayName);
         serializedObject.put("must-be-held", this.mustBeHeld);
-      //  serializedObject.put("lore", this.lore);
+        serializedObject.put("lore", this.lore);
         serializedObject.put("material", this.material.toString());
-        serializedObject.put("abilities", this.abilities);
+        serializedObject.put("abilities", this.abilities.stream().map(Ability::serializeToConfig).collect(Collectors.toList()));
 
         return serializedObject;
     }

@@ -37,4 +37,6 @@ public abstract class Ability {
         this.supportedEvents.remove(eventClass);
     }
 
+    public abstract String serializeToConfig();
+
 }

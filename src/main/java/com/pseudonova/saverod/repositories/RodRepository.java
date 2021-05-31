@@ -1,18 +1,25 @@
 package com.pseudonova.saverod.repositories;
 
 import com.pseudonova.saverod.SaveRod;
+import com.pseudonova.saverod.abilities.HealAbility;
 import com.pseudonova.saverod.interfaces.IRepository;
+import com.pseudonova.saverod.models.Ability;
 import com.pseudonova.saverod.models.Rod;
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -25,18 +32,15 @@ public class RodRepository implements IRepository<String, Rod> {
     public RodRepository(SaveRod main) {
         this.main = main;
         createConfig();
-
-        loadRod();
     }
 
     @Override
     public void addOrUpdate(String rodName, Rod rod) {
 
-        Map<String, Object> serializedObject = rod.serialize();
+        Map<String, Object> serializedRod = rod.serialize();
 
-        this.rodConfiguration.set(getRodPath(rodName), serializedObject);
+        this.rodConfiguration.set(getRodPath(rodName), serializedRod);
         saveConfig();
-
     }
 
     @Override
@@ -45,17 +49,10 @@ public class RodRepository implements IRepository<String, Rod> {
     }
 
     @Override
-    public Rod getValue(String key) {
+    public Rod getValue(String rodName) {
+        Map<String, Object> rodMap = readRodMap(rodName);
 
-        ConfigurationSection section = this.rodConfiguration.getConfigurationSection(getRodPath(key));
-
-        Map<String, Object> rodData = new HashMap<>();
-        rodData.put("name", section.get("name"));
-        rodData.put("display-name", section.get("display-name"));
-        rodData.put("material", section.get("material"));
-        rodData.put("must-be-held", section.get("must-be-held"));
-
-        return new Rod(rodData);
+        return new Rod(rodMap);
     }
 
     private void createConfig() {
@@ -85,13 +82,41 @@ public class RodRepository implements IRepository<String, Rod> {
         }
     }
 
-    private void loadRod(){
-        ConfigurationSection section = this.rodConfiguration.getConfigurationSection(getRodPath("vip"));
-        Map<String, Object> map = section.getKeys(false).stream().collect(toMap(Function.identity(), section::get));
-        System.out.println(map);
+    private Map<String, Object> readRodMap(String rodName) {
+        System.out.println("FUCK YOU: " + this.rodConfiguration.get(getRodPath(rodName)).getClass().getSimpleName());
+        Map<String, Object> map = (Map<String, Object>) this.rodConfiguration.get(getRodPath(rodName));
+        map.put("abilities", parseAbilities((List<String>) map.get("abilities")));
+
+        return map;
     }
+
+
 
     private String getRodPath(String rodName){
         return String.format("rods.%s", rodName.toLowerCase());
+    }
+
+    private List<Ability> parseAbilities(List<String> abilitiesStrings){
+        return abilitiesStrings.stream()
+                .map(abilityString -> {
+                    try {
+                        return parseAbility(abilityString);
+                    }
+                    catch(Exception e) {
+                        throw new RuntimeException(String.format("Couldn't format the ability '%s'!", abilityString));
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
+    private static Ability parseAbility(String configLine) throws ReflectiveOperationException {
+        String[] data = configLine.split(" ");
+        String abilityName = data[0];
+        String[] parameters = Arrays.copyOfRange(data, 1, data.length);
+
+        Class<?> abilityClass = Class.forName(String.format("com.pseudonova.saverod.abilities.%sAbility", WordUtils.capitalizeFully(abilityName)));
+        Method deserializerStaticMethod = abilityClass.getDeclaredMethod("deserialize", String[].class);
+
+        return (Ability) deserializerStaticMethod.invoke(null, new Object[]{parameters});
     }
 }

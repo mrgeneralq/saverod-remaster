@@ -8,7 +8,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 public class FeedAbility extends Ability {
     private final int foodLevel;
 
-    public FeedAbility(Rod rod, int foodLevel) {
+    public FeedAbility(int foodLevel) {
         super( "feed");
 
         this.foodLevel = foodLevel;
@@ -29,6 +29,17 @@ public class FeedAbility extends Ability {
 
     public double getFoodLevel() {
         return this.foodLevel;
+    }
+
+    @Override
+    public String serializeToConfig(){
+        return String.format("feed %d", this.foodLevel);
+    }
+
+    public static FeedAbility deserialize(String[] parameters){
+        int foodLevel = Integer.parseInt(parameters[0]);
+
+        return new FeedAbility(foodLevel);
     }
 
     /*

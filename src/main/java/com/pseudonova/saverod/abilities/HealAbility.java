@@ -26,12 +26,17 @@ public class HealAbility extends Ability
         return this.healthToHeal;
     }
 
-    public static HealAbility deserialize(String[] abilityString){
+    public static HealAbility deserialize(String[] parameters){
 
-        double healthToHeal = Double.parseDouble(abilityString[0]);
+        double healthToHeal = Double.parseDouble(parameters[0]);
 
         return new HealAbility(healthToHeal);
 
+    }
+
+    @Override
+    public String serializeToConfig(){
+        return String.format("heal %.2f", this.healthToHeal);
     }
 
 }

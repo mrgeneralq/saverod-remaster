@@ -1,10 +1,19 @@
 package com.pseudonova.saverod.abilities;
 
-import com.pseudonova.saverod.models.Rod;
-
 public class SurviveAbility extends HealAbility
 {
-    public SurviveAbility(Rod rod) {
+    public static final SurviveAbility INSTANCE = new SurviveAbility();
+
+    public SurviveAbility() {
         super(20);
+    }
+
+    @Override
+    public String serializeToConfig() {
+        return "survive";
+    }
+
+    public static SurviveAbility deserialize(String[] parameters){
+        return INSTANCE;
     }
 }
