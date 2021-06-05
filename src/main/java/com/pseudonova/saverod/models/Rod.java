@@ -1,16 +1,18 @@
 package com.pseudonova.saverod.models;
 
+import com.pseudonova.saverod.enums.AbilityType;
+import com.pseudonova.saverod.statics.NameSpaceCollector;
 import org.apache.commons.lang.WordUtils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
-import java.lang.reflect.Method;
-import java.sql.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,6 +36,8 @@ public class Rod implements ConfigurationSerializable {
         this.material = Material.BLAZE_ROD;
     }
 
+    //just a constructor of the object with a map containing the config properties
+
     @SuppressWarnings("unchecked")
     public Rod(Map<String, Object> configObject){
 
@@ -41,10 +45,7 @@ public class Rod implements ConfigurationSerializable {
         this.displayName = (String) configObject.get("display-name");
         this.mustBeHeld = (Boolean) configObject.get("must-be-held");
         this.material = Material.matchMaterial((String) configObject.get("material"));
-
-        //abilities
-        List<String> serializedAbilities = (List<String>) configObject.get("abilities");
-        this.abilities = parseAbilities(serializedAbilities);
+        this.abilities = (List<Ability>) configObject.get("abilities");
     }
 
     public String getName() {
@@ -87,7 +88,21 @@ public class Rod implements ConfigurationSerializable {
 
         this.abilities.stream()
                 .filter(ability -> ability.isSupportedEvent(event))
-                .forEach(ability -> ability.activateWithin(event));
+                .forEach(ability ->
+                {
+                    Bukkit.broadcastMessage(ability.getName() + " ability was used, inside the rod " + this.name);
+                    ability.activateWithin(event);
+                });
+    }
+
+    public boolean hasInteractiveAbility() {
+        return getAbilities(AbilityType.INTERACTIVE).size() == 1;
+    }
+
+    public List<Ability> getAbilities(AbilityType type){
+        return this.abilities.stream()
+                .filter(ability -> ability.getType() == type)
+                .collect(Collectors.toList());
     }
 
 
@@ -100,7 +115,7 @@ public class Rod implements ConfigurationSerializable {
         serializedObject.put("must-be-held", this.mustBeHeld);
         serializedObject.put("lore", this.lore);
         serializedObject.put("material", material.toString());
-        serializedObject.put("abilities", this.abilities.stream().map(Ability::serializeToConfig).collect(Collectors.toList()));
+        serializedObject.put("abilities", this.abilities);
 
         return serializedObject;
     }
@@ -111,6 +126,7 @@ public class Rod implements ConfigurationSerializable {
 
         ItemMeta meta = itemStack.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', this.displayName));
+        meta.getPersistentDataContainer().set(NameSpaceCollector.getInstance().getRodKey(), PersistentDataType.STRING, this.name);
 
         meta.setLore(this.abilities.stream().map(Ability::getName).collect(Collectors.toList()));
 
@@ -119,33 +135,4 @@ public class Rod implements ConfigurationSerializable {
         return itemStack;
 
     }
-
-
-    private List<Ability> parseAbilities(List<String> abilitiesStrings){
-        if(abilitiesStrings == null)
-            return new ArrayList<>();
-
-        return abilitiesStrings.stream()
-                .map(serializedAbility -> {
-                    try {
-                        return parseAbility(serializedAbility);
-                    }
-                    catch(Exception e) {
-                        throw new RuntimeException(String.format("Couldn't format the ability '%s'!", serializedAbility));
-                    }
-                })
-                .collect(Collectors.toList());
-    }
-
-    private static Ability parseAbility(String configLine) throws ReflectiveOperationException {
-        String[] data = configLine.split(" ");
-        String abilityName = data[0];
-        String[] parameters = Arrays.copyOfRange(data, 1, data.length);
-
-        Class<?> abilityClass = Class.forName(String.format("com.pseudonova.saverod.abilities.%sAbility", WordUtils.capitalizeFully(abilityName)));
-        Method deserializerStaticMethod = abilityClass.getDeclaredMethod("deserialize", String[].class);
-
-        return (Ability) deserializerStaticMethod.invoke(null, new Object[]{parameters});
-    }
-
 }

@@ -4,62 +4,64 @@ import com.pseudonova.saverod.interfaces.IRodService;
 import com.pseudonova.saverod.models.Rod;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerEvent;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 public class AbilitiesListeners implements Listener
 {
-    private final Rod testRod;
     private final IRodService rodService;
 
-    public AbilitiesListeners(Rod testRod, IRodService rodService){
-        this.testRod = testRod;
+    public AbilitiesListeners(IRodService rodService){
         this.rodService = rodService;
     }
 
     @EventHandler
-    public void on(EntityDamageEvent event){
+    public void onPlayerDamage(PlayerDeathEvent event){
 
-        if(event.getEntityType() == EntityType.PLAYER)
-            this.testRod.activateWithin(event);
+        test(event);
     }
 
-    @EventHandler
-    public void on(PlayerDeathEvent event){
-        this.testRod.activateWithin(event);
-    }
-
-    @EventHandler
-    public void on(PlayerRespawnEvent event){
-        this.testRod.activateWithin(event);
-    }
-
-    //Testings, don't touch
-
-    /*private void activateRod(Event event){
-
-        if(this.)
-
-
-        Player player = null;
-
-        if(event instanceof PlayerEvent)
-            player = ((PlayerEvent) event).getPlayer();
-
-        else if(event instanceof EntityDamageEvent){
-            EntityDamageEvent entityDamageEvent = (EntityDamageEvent) event;
-
-            if(entityDamageEvent.getEntityType() == EntityType.PLAYER)
-                player = (Player) ((EntityDamageEvent) event).getEntity();
-        }
+    private void test(Event event) {
+        System.out.println("1");
+       Player player = getPlayer(event);
 
         if(player == null)
             return;
 
-        this.testRod.activateWithin(event);
-    }*/
+        System.out.println("2");
+
+        //try to find a rod in the player's inventory
+        Rod rod = Arrays.stream(player.getInventory().getContents())
+                .filter(Objects::nonNull)
+                .map(this.rodService::getRod)
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
+
+        System.out.println("3");
+
+        rod.activateWithin(event);
+    }
+
+    private Player getPlayer(Event event){
+        if(event instanceof PlayerEvent) {
+            System.out.println("test");
+            return ((PlayerEvent) event).getPlayer();
+        }
+        else if(event instanceof EntityEvent) {
+            System.out.println("test 2");
+            EntityEvent entityEvent = (EntityEvent) event;
+
+            if (entityEvent.getEntityType() == EntityType.PLAYER)
+                return (Player) entityEvent.getEntity();
+        }
+        return null;
+    }
 }

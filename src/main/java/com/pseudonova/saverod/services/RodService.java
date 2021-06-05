@@ -4,6 +4,7 @@ import com.pseudonova.saverod.SaveRod;
 import com.pseudonova.saverod.interfaces.IRodService;
 import com.pseudonova.saverod.models.Rod;
 import com.pseudonova.saverod.repositories.RodRepository;
+import com.pseudonova.saverod.statics.NameSpaceCollector;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -12,11 +13,9 @@ import org.bukkit.persistence.PersistentDataType;
 public class RodService implements IRodService
 {
     private final RodRepository rodRepository;
-    private final NamespacedKey rodKey;
 
     public RodService(SaveRod main , RodRepository rodRepository) {
         this.rodRepository = rodRepository;
-        this.rodKey = new NamespacedKey(main, "rod");
     }
 
     @Override
@@ -27,10 +26,10 @@ public class RodService implements IRodService
 
         PersistentDataContainer dataContainer = item.getItemMeta().getPersistentDataContainer();
 
-        if(!dataContainer.has(this.rodKey, PersistentDataType.STRING))
+        if(!dataContainer.has(NameSpaceCollector.getInstance().getRodKey(), PersistentDataType.STRING))
             return false;
 
-        String rodName = dataContainer.get(this.rodKey, PersistentDataType.STRING);
+        String rodName = dataContainer.get(NameSpaceCollector.getInstance().getRodKey(), PersistentDataType.STRING);
 
         return this.rodRepository.containsKey(rodName);
 
@@ -46,7 +45,7 @@ public class RodService implements IRodService
         if(!isRod(rodItem))
             return null;
 
-        String rodName = rodItem.getItemMeta().getPersistentDataContainer().get(this.rodKey, PersistentDataType.STRING);
+        String rodName = rodItem.getItemMeta().getPersistentDataContainer().get(NameSpaceCollector.getInstance().getRodKey(), PersistentDataType.STRING);
 
         return this.rodRepository.getValue(rodName);
     }

@@ -1,15 +1,18 @@
 package com.pseudonova.saverod.abilities;
 
+import com.pseudonova.saverod.enums.AbilityType;
 import com.pseudonova.saverod.models.Ability;
-import com.pseudonova.saverod.models.Rod;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class FeedAbility extends Ability {
     private final int foodLevel;
 
     public FeedAbility(int foodLevel) {
-        super( "feed");
+        super( "feed", AbilityType.INTERACTIVE);
 
         this.foodLevel = foodLevel;
 
@@ -27,18 +30,18 @@ public class FeedAbility extends Ability {
         });
     }
 
-    public double getFoodLevel() {
-        return this.foodLevel;
+    //if I do something wrong, please tell
+
+    public FeedAbility(Map<String, Object> map){
+        this((int) map.get("feed-amount"));
     }
 
     @Override
-    public String serializeToConfig(){
-        return String.format("feed %d", this.foodLevel);
-    }
+    public Map<String, Object> serialize() {
+        Map<String, Object> map = new HashMap<>();
 
-    public static FeedAbility deserialize(String[] parameters){
-        int foodLevel = Integer.parseInt(parameters[0]);
+        map.put("feed-amount", this.foodLevel);
 
-        return new FeedAbility(foodLevel);
+        return map;
     }
 }
