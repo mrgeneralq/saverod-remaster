@@ -3,6 +3,7 @@ package com.pseudonova.saverod.models;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -10,29 +11,34 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Rod {
+public class Rod implements ConfigurationSerializable {
 
     private final String name;
-    private boolean mustBeHeld = false;
-    private List<Ability> abilities = new ArrayList<>();
+    private boolean mustBeHeld;
+    private List<Ability> abilities;
 
     //item's data
-    private String displayName = "";
-    private Material material = Material.BLAZE_ROD;
-    private List<String> lore = new ArrayList<>();
+    private String displayName;
+    private Material material;
+    private List<String> lore;
 
     public Rod(String name) {
         this.name = name;
+        this.displayName = "reetstok";
+        this.mustBeHeld = false;
+        this.abilities = new ArrayList<>();
+        this.lore = new ArrayList<>();
+        this.material = Material.BLAZE_ROD;
     }
 
 
     public Rod(Map<String, Object> configObject){
+
         this.name = (String) configObject.get("name");
-        this.mustBeHeld = (boolean) configObject.get("must-be-held");
         this.displayName = (String) configObject.get("display-name");
-        this.material = Material.getMaterial((String) configObject.get("material"));
-        this.lore = (List<String>) configObject.get("lore");
-        this.abilities = (List<Ability>) configObject.get("abilities");
+        this.mustBeHeld = (Boolean) configObject.get("must-be-held");
+        this.material = (Material) Material.matchMaterial((String) configObject.get("material"));
+
     }
 
     public String getName() {
@@ -86,9 +92,9 @@ public class Rod {
         serializedObject.put("name", this.name);
         serializedObject.put("display-name", this.displayName);
         serializedObject.put("must-be-held", this.mustBeHeld);
-        serializedObject.put("lore", this.lore);
-        serializedObject.put("material", this.material.toString());
-        serializedObject.put("abilities", this.abilities.stream().map(Ability::serializeToConfig).collect(Collectors.toList()));
+    //    serializedObject.put("lore", this.lore);
+        serializedObject.put("material", material.toString());
+    //    serializedObject.put("abilities", this.abilities.stream().map(Ability::serializeToConfig).collect(Collectors.toList()));
 
         return serializedObject;
     }

@@ -59,8 +59,8 @@ public class RodService implements IRodService
 
 
     @Override
-    public void createRod(String name, Rod rod){
-        this.rodRepository.addOrUpdate(name, rod);
+    public void createRod(Rod rod){
+        this.rodRepository.addOrUpdate(rod);
     }
 
 }

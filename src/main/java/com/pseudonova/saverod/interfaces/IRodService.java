@@ -13,5 +13,5 @@ public interface IRodService {
 
     Rod getRodByName(String name);
 
-    void createRod(String name, Rod rod);
+    void createRod(Rod rod);
 }

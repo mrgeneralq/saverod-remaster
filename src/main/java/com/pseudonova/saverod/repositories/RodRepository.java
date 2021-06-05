@@ -6,6 +6,7 @@ import com.pseudonova.saverod.interfaces.IRepository;
 import com.pseudonova.saverod.models.Ability;
 import com.pseudonova.saverod.models.Rod;
 import org.apache.commons.lang.WordUtils;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.MemorySection;
@@ -16,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -35,12 +37,11 @@ public class RodRepository implements IRepository<String, Rod> {
     }
 
     @Override
-    public void addOrUpdate(String rodName, Rod rod) {
+    public void addOrUpdate(Rod rod) {
 
-        Map<String, Object> serializedRod = rod.serialize();
-
-        this.rodConfiguration.set(getRodPath(rodName), serializedRod);
+        this.rodConfiguration.set(getRodPath(rod.getName()), rod);
         saveConfig();
+
     }
 
     @Override
@@ -50,9 +51,8 @@ public class RodRepository implements IRepository<String, Rod> {
 
     @Override
     public Rod getValue(String rodName) {
-        Map<String, Object> rodMap = readRodMap(rodName);
+        return (Rod) rodConfiguration.get(getRodPath(rodName));
 
-        return new Rod(rodMap);
     }
 
     private void createConfig() {
@@ -66,7 +66,10 @@ public class RodRepository implements IRepository<String, Rod> {
         }
 
         this.rodConfiguration = new YamlConfiguration();
+        loadConfig();
+    }
 
+    private void loadConfig(){
         try {
             rodConfiguration.load(rodFile);
         } catch (IOException | InvalidConfigurationException e) {
@@ -77,17 +80,42 @@ public class RodRepository implements IRepository<String, Rod> {
     private void saveConfig() {
         try {
             this.rodConfiguration.save(rodFile);
+           //WORK AROUND loadConfig();
         } catch (IOException exception) {
             exception.printStackTrace();
         }
     }
 
     private Map<String, Object> readRodMap(String rodName) {
-        System.out.println("FUCK YOU: " + this.rodConfiguration.get(getRodPath(rodName)).getClass().getSimpleName());
-        Map<String, Object> map = (Map<String, Object>) this.rodConfiguration.get(getRodPath(rodName));
-        map.put("abilities", parseAbilities((List<String>) map.get("abilities")));
 
-        return map;
+        System.out.println("rodname: " + rodName);
+
+        Map<String, Object> rodMap = new HashMap<>();
+        rodMap.put("name", (String) this.getRodProperty(rodName, "name"));
+        rodMap.put("display-name", (String) this.getRodProperty(rodName, "display-name"));
+        rodMap.put("must-be-held", (Boolean) this.getRodProperty(rodName, "must-be-held"));
+
+        System.out.println("Display name: " + this.getRodProperty(rodName, "display-name"));
+        System.out.println("Material name: " + this.rodConfiguration.get(String.format("rods.%s.material", rodName)));
+        rodMap.put("material", Material.matchMaterial((String) this.getRodProperty(rodName, "material")));
+
+
+        List<String> abilities = (List<String>) this.rodConfiguration.get(getRodPath(rodName) + ".abilities");
+
+        try{
+            Ability ability = parseAbility(abilities.get(0));
+            System.out.println(ability.serializeToConfig());
+        }catch (Exception ex){
+
+        }
+
+        return rodMap;
+    }
+
+    private Object getRodProperty(String rodName, String propertyName){
+
+        String rodPath = this.getRodPath(rodName);
+        return this.rodConfiguration.get(String.format("%s.%s", rodPath, propertyName));
     }
 
 
