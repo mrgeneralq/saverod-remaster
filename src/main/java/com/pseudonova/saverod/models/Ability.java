@@ -1,6 +1,5 @@
 package com.pseudonova.saverod.models;
 
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.event.Event;
 
 import java.util.HashMap;
@@ -19,7 +18,6 @@ public abstract class Ability {
         return name;
     }
 
-
     @SuppressWarnings("unchecked") //safe unchecked cast
     public <E extends Event> void activateWithin(E event) {
         Consumer<E> handler = (Consumer<E>) this.supportedEvents.get(event.getClass());
@@ -34,7 +32,7 @@ public abstract class Ability {
         return this.supportedEvents.containsKey(event.getClass());
     }
 
-    public void unsupportEvent(Class<? extends Event> eventClass){
+    public void unsupportEvent(Class<? extends Event> eventClass) {
         this.supportedEvents.remove(eventClass);
     }
 

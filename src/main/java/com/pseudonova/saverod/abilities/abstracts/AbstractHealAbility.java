@@ -5,11 +5,10 @@ import org.bukkit.event.entity.EntityDamageEvent;
 
 public abstract class AbstractHealAbility extends Ability
 {
+    protected final double healthToHeal; //protected because it's required for serialization
 
-    protected final double healthToHeal;
-
-    public AbstractHealAbility(double healthToHeal, String name) {
-        super(name);
+    public AbstractHealAbility(String name, double healthToHeal) {
+        super(name); //this class is abstract, it doesn't even define the name of the ability. only the HEAL related stuff. do you see?
 
         this.healthToHeal = healthToHeal;
 

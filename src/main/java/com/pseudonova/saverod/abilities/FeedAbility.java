@@ -41,22 +41,4 @@ public class FeedAbility extends Ability {
 
         return new FeedAbility(foodLevel);
     }
-
-    /*
-    @Override
-    public boolean hasValidParameters(String[] args) {
-
-        if (args.length == 0)
-            return false;
-
-        try {
-            int valueToFeed = Integer.parseInt(args[0]);
-            if (valueToFeed > 0 && valueToFeed <= 20)
-                return true;
-            return false;
-        } catch (Exception ex) {
-            return false;
-        }
-    }
-     */
 }

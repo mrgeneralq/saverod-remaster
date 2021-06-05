@@ -7,7 +7,7 @@ public class SurviveAbility extends AbstractHealAbility
     public static final SurviveAbility INSTANCE = new SurviveAbility();
 
     public SurviveAbility() {
-        super(20,"survive");
+        super("survive", 20);
     }
 
     @Override
@@ -18,6 +18,4 @@ public class SurviveAbility extends AbstractHealAbility
     public static SurviveAbility deserialize(String[] parameters){
         return INSTANCE;
     }
-
-
 }

@@ -4,9 +4,8 @@ import com.pseudonova.saverod.abilities.abstracts.AbstractHealAbility;
 
 public class HealAbility extends AbstractHealAbility
 {
-
     public HealAbility(Double healthToHeal) {
-        super(healthToHeal,"heal");
+        super("heal", healthToHeal);
     }
 
     @Override
@@ -15,9 +14,9 @@ public class HealAbility extends AbstractHealAbility
         return String.format("heal %s", this.healthToHeal);
     }
 
-    public static HealAbility deserialize(String[] parameters){
+    public static HealAbility deserialize(String[] parameters) {
         double healthToHeal = Double.parseDouble(parameters[0]);
+
         return new HealAbility(healthToHeal);
     }
-
 }

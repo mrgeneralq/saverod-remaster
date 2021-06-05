@@ -1,7 +1,7 @@
 package com.pseudonova.saverod.models;
 
 import org.apache.commons.lang.WordUtils;
-import org.bukkit.Bukkit;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -10,14 +10,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.lang.reflect.Method;
+import java.sql.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Rod implements ConfigurationSerializable {
 
     private final String name;
-    private boolean mustBeHeld;
-    private List<Ability> abilities;
+    private final boolean mustBeHeld;
+    private final List<Ability> abilities;
 
     //item's data
     private String displayName;
@@ -39,10 +40,11 @@ public class Rod implements ConfigurationSerializable {
         this.name = (String) configObject.get("name");
         this.displayName = (String) configObject.get("display-name");
         this.mustBeHeld = (Boolean) configObject.get("must-be-held");
-        this.material = (Material) Material.matchMaterial((String) configObject.get("material"));
+        this.material = Material.matchMaterial((String) configObject.get("material"));
 
-        List<String> stringList = (List<String>) configObject.get("abilities");
-        this.abilities = stringList == null ? new ArrayList<>() : parseAbilities(stringList);
+        //abilities
+        List<String> serializedAbilities = (List<String>) configObject.get("abilities");
+        this.abilities = parseAbilities(serializedAbilities);
     }
 
     public String getName() {
@@ -120,13 +122,16 @@ public class Rod implements ConfigurationSerializable {
 
 
     private List<Ability> parseAbilities(List<String> abilitiesStrings){
+        if(abilitiesStrings == null)
+            return new ArrayList<>();
+
         return abilitiesStrings.stream()
-                .map(abilityString -> {
+                .map(serializedAbility -> {
                     try {
-                        return parseAbility(abilityString);
+                        return parseAbility(serializedAbility);
                     }
                     catch(Exception e) {
-                        throw new RuntimeException(String.format("Couldn't format the ability '%s'!", abilityString));
+                        throw new RuntimeException(String.format("Couldn't format the ability '%s'!", serializedAbility));
                     }
                 })
                 .collect(Collectors.toList());

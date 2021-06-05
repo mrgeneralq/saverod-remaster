@@ -24,7 +24,6 @@ public class AbilitiesListeners implements Listener
     @EventHandler
     public void on(EntityDamageEvent event){
 
-        //activate the rod only if the damaged entity is a player
         if(event.getEntityType() == EntityType.PLAYER)
             this.testRod.activateWithin(event);
     }
@@ -63,12 +62,4 @@ public class AbilitiesListeners implements Listener
 
         this.testRod.activateWithin(event);
     }*/
-
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent e){
-
-        Player player = e.getPlayer();
-        player.getInventory().addItem(rodService.getRodByName("vip").getItem());
-
-    }
 }

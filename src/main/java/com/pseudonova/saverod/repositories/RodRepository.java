@@ -10,8 +10,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 
-import static java.util.stream.Collectors.toMap;
-
 public class RodRepository implements IRepository<String, Rod> {
 
     private final SaveRod main;

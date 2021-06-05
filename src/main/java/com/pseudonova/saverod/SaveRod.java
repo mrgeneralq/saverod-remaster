@@ -1,6 +1,5 @@
 package com.pseudonova.saverod;
 
-import com.pseudonova.saverod.abilities.abstracts.AbstractHealAbility;
 import com.pseudonova.saverod.abilities.healing.HealAbility;
 import com.pseudonova.saverod.abilities.healing.SurviveAbility;
 import com.pseudonova.saverod.commands.RodCommand;
@@ -18,11 +17,7 @@ public class SaveRod extends JavaPlugin {
     @Override
     public void onEnable(){
 
-
-
-
         ConfigurationSerialization.registerClass(Rod.class);
-
 
         this.bootstrapper = Bootstrapper.getBootstrapper();
         this.bootstrapper.initialize(this);
@@ -30,10 +25,12 @@ public class SaveRod extends JavaPlugin {
         Bukkit.getPluginCommand("rod").setExecutor(new RodCommand(this.bootstrapper.getRodService()));
 
 
-
         IRodService rodService = bootstrapper.getRodService();
+
+        //create test rods
         Rod rod = new Rod("quinten");
         rod.addAbility(new HealAbility(5.0));
+
         Rod koen = new Rod("koen");
         koen.addAbility(new SurviveAbility());
 
