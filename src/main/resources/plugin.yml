@@ -2,3 +2,5 @@ name: SaveRod
 main: com.pseudonova.saverod.SaveRod
 version: 1.0
 api-version: 1.13
+commands:
+  rod:

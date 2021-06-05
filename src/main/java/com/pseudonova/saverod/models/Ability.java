@@ -1,5 +1,6 @@
 package com.pseudonova.saverod.models;
 
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.event.Event;
 
 import java.util.HashMap;

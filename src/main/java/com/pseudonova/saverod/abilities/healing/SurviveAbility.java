@@ -1,11 +1,13 @@
-package com.pseudonova.saverod.abilities;
+package com.pseudonova.saverod.abilities.healing;
 
-public class SurviveAbility extends HealAbility
+import com.pseudonova.saverod.abilities.abstracts.AbstractHealAbility;
+
+public class SurviveAbility extends AbstractHealAbility
 {
     public static final SurviveAbility INSTANCE = new SurviveAbility();
 
     public SurviveAbility() {
-        super(20);
+        super(20,"survive");
     }
 
     @Override
@@ -16,4 +18,6 @@ public class SurviveAbility extends HealAbility
     public static SurviveAbility deserialize(String[] parameters){
         return INSTANCE;
     }
+
+
 }

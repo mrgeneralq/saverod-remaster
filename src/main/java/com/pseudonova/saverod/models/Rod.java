@@ -1,5 +1,6 @@
 package com.pseudonova.saverod.models;
 
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -8,6 +9,7 @@ import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,7 +33,7 @@ public class Rod implements ConfigurationSerializable {
         this.material = Material.BLAZE_ROD;
     }
 
-
+    @SuppressWarnings("unchecked")
     public Rod(Map<String, Object> configObject){
 
         this.name = (String) configObject.get("name");
@@ -39,6 +41,8 @@ public class Rod implements ConfigurationSerializable {
         this.mustBeHeld = (Boolean) configObject.get("must-be-held");
         this.material = (Material) Material.matchMaterial((String) configObject.get("material"));
 
+        List<String> stringList = (List<String>) configObject.get("abilities");
+        this.abilities = stringList == null ? new ArrayList<>() : parseAbilities(stringList);
     }
 
     public String getName() {
@@ -92,9 +96,9 @@ public class Rod implements ConfigurationSerializable {
         serializedObject.put("name", this.name);
         serializedObject.put("display-name", this.displayName);
         serializedObject.put("must-be-held", this.mustBeHeld);
-    //    serializedObject.put("lore", this.lore);
+        serializedObject.put("lore", this.lore);
         serializedObject.put("material", material.toString());
-    //    serializedObject.put("abilities", this.abilities.stream().map(Ability::serializeToConfig).collect(Collectors.toList()));
+        serializedObject.put("abilities", this.abilities.stream().map(Ability::serializeToConfig).collect(Collectors.toList()));
 
         return serializedObject;
     }
@@ -112,6 +116,31 @@ public class Rod implements ConfigurationSerializable {
 
         return itemStack;
 
+    }
+
+
+    private List<Ability> parseAbilities(List<String> abilitiesStrings){
+        return abilitiesStrings.stream()
+                .map(abilityString -> {
+                    try {
+                        return parseAbility(abilityString);
+                    }
+                    catch(Exception e) {
+                        throw new RuntimeException(String.format("Couldn't format the ability '%s'!", abilityString));
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
+    private static Ability parseAbility(String configLine) throws ReflectiveOperationException {
+        String[] data = configLine.split(" ");
+        String abilityName = data[0];
+        String[] parameters = Arrays.copyOfRange(data, 1, data.length);
+
+        Class<?> abilityClass = Class.forName(String.format("com.pseudonova.saverod.abilities.%sAbility", WordUtils.capitalizeFully(abilityName)));
+        Method deserializerStaticMethod = abilityClass.getDeclaredMethod("deserialize", String[].class);
+
+        return (Ability) deserializerStaticMethod.invoke(null, new Object[]{parameters});
     }
 
 }
