@@ -11,8 +11,8 @@ public abstract class AbstractHealAbility extends Ability
 {
     private final double healthToHeal;
 
-    public AbstractHealAbility(String name, double healthToHeal) {
-        super(name, AbilityType.INTERACTIVE);
+    public AbstractHealAbility(String name, double healthToHeal, int maxUses) {
+        super(name, AbilityType.INTERACTIVE, maxUses);
 
         this.healthToHeal = healthToHeal;
 
@@ -31,8 +31,7 @@ public abstract class AbstractHealAbility extends Ability
 
     @Override
     public Map<String, Object> serialize() {
-        Map<String, Object> map = new HashMap<>();
-
+        Map<String, Object> map = super.serialize();
         map.put("health-to-heal", this.healthToHeal);
 
         return map;

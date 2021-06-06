@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class RodInstance implements ConfigurationSerializable {
 
-    private final UUID instanceID;
+    private final UUID instanceID; //unique id
     private final Rod rod;
     private Map<Ability, Integer> usesLeft = new HashMap<>();
 

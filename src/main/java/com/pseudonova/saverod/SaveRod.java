@@ -36,12 +36,12 @@ public class SaveRod extends JavaPlugin {
 
         //create test rods
         Rod rod = new Rod("quinten");
-        rod.addAbility(new HealAbility(5.0));
-        rod.addAbility(new SaveInventoryAbility());
-        rod.addAbility(new SurviveAbility());
+        rod.addAbility(new HealAbility(5.0, 5));
+        rod.addAbility(new SaveInventoryAbility(5));
+        rod.addAbility(new SurviveAbility(4));
 
         Rod koen = new Rod("koen");
-        koen.addAbility(new SurviveAbility());
+        koen.addAbility(new SurviveAbility(6));
 
 
         if(!rodService.rodExists("quinten"))

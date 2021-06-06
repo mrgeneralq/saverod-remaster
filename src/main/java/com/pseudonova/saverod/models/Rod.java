@@ -97,11 +97,16 @@ public class Rod implements ConfigurationSerializable {
     }
 
     public List<Ability> getAbilities(AbilityType type){
+
+
         return this.abilities.stream()
                 .filter(ability -> ability.getType() == type)
                 .collect(Collectors.toList());
     }
 
+    public List<Ability> getAbilities(){
+        return this.abilities;
+    }
 
     public Map<String, Object> serialize() {
 

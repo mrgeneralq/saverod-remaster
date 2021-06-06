@@ -40,6 +40,11 @@ public class RodRepository implements IRepository<String, Rod> {
 
     }
 
+    @Override
+    public void remove(String rodName) {
+        rodConfiguration.set(getRodPath(rodName), null);
+    }
+
     private void createConfig() {
 
         final String rodConfigName = "rods.yml";

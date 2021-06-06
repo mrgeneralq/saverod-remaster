@@ -9,8 +9,8 @@ import java.util.Map;
 
 public class SaveInventoryAbility extends Ability {
 
-    public SaveInventoryAbility() {
-        super( "save-inventory", AbilityType.PASSIVE);
+    public SaveInventoryAbility(int maxUses) {
+        super( "save-inventory", AbilityType.PASSIVE, maxUses);
 
         when(PlayerDeathEvent.class, event ->
         {
@@ -20,11 +20,6 @@ public class SaveInventoryAbility extends Ability {
     }
 
     public SaveInventoryAbility(Map<String, Object> map){
-        this();
-    }
-
-    @Override
-    public Map<String, Object> serialize() {
-        return new HashMap<>();
+        this((int) map.get("max-uses"));
     }
 }
