@@ -32,7 +32,7 @@ public class Rod implements ConfigurationSerializable {
         this.mustBeHeld = false;
         this.abilities = new ArrayList<>();
 
-        this.displayName = ChatColor.GREEN + "Default rod";
+        this.displayName = ChatColor.GREEN + name;
         this.lore = new ArrayList<>();
         this.material = Material.BLAZE_ROD;
     }
@@ -135,7 +135,7 @@ public class Rod implements ConfigurationSerializable {
         return itemStack;
     }
 
-    private List<String> getLoreWithAbilities(){
+    public List<String> getLoreWithAbilities(){
         List<String> newLore = new ArrayList<>(this.lore);
         newLore.add(ChatColor.GRAY + "Abilities(" + ChatColor.GREEN + this.abilities.size() + ChatColor.GRAY + "):");
         newLore.addAll(this.abilities.stream().map(Ability::getName).map(abilityName -> ChatColor.GREEN + abilityName).collect(Collectors.toList()));

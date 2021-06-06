@@ -8,6 +8,6 @@ import java.util.UUID;
 public interface IRodInstanceService {
     RodInstance getRodInstance(UUID id);
     void removeRodInstance(UUID id);
-
     RodInstance getNewInstance(Rod rod);
+    boolean instanceExists(UUID id);
 }

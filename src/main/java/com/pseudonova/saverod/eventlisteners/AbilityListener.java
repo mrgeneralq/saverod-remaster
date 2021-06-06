@@ -1,7 +1,9 @@
 package com.pseudonova.saverod.eventlisteners;
 
+import com.pseudonova.saverod.interfaces.IRodInstanceService;
 import com.pseudonova.saverod.interfaces.IRodService;
 import com.pseudonova.saverod.models.Rod;
+import com.pseudonova.saverod.models.RodInstance;
 import com.pseudonova.saverod.statics.InventoryUtils;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -12,7 +14,9 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.Objects;
@@ -21,9 +25,11 @@ import java.util.stream.Collectors;
 public class AbilityListener implements Listener
 {
     private final IRodService rodService;
+    private final IRodInstanceService rodInstanceService;
 
-    public AbilityListener(IRodService rodService){
+    public AbilityListener(IRodService rodService, IRodInstanceService rodInstanceService){
         this.rodService = rodService;
+        this.rodInstanceService = rodInstanceService;
     }
 
     @EventHandler
@@ -36,6 +42,24 @@ public class AbilityListener implements Listener
         handle(event);
     }
 
+    @EventHandler
+    public void onPlayerInteractEvent(PlayerInteractEvent event){
+
+        Player player = event.getPlayer();
+
+        ItemStack itemStack = event.getItem();
+
+        if(!rodService.isRod(itemStack)){
+            player.sendMessage("this is not rod!");
+            return;
+        }
+
+        RodInstance rodInstance = rodService.getInstance(itemStack);
+        player.sendMessage("Uses left: " + rodInstance.getUsesLeft("survive"));
+
+
+    }
+
     private void handle(Event event) {
 
        Player player = getPlayer(event);
@@ -45,13 +69,17 @@ public class AbilityListener implements Listener
             return;
 
         //activate the rods in the player's inventory
-        for(Rod rod : getRodsIn(player.getInventory()))
+        for(RodInstance rodInstance : getRodsIn(player.getInventory())){
+            Rod rod = rodService.getRodByName(rodInstance.getRodID());
             rod.handleEvent(event);
+        }
     }
 
-    private List<Rod> getRodsIn(Inventory inventory){
+    private List<RodInstance> getRodsIn(Inventory inventory){
+
         return InventoryUtils.getItems(inventory).stream()
-                .map(this.rodService::getRod)
+                .filter(this.rodService::isRod)
+                .map(this.rodService::getInstance)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }

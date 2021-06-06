@@ -8,6 +8,7 @@ import com.pseudonova.saverod.commands.RodCommand;
 import com.pseudonova.saverod.eventlisteners.AbilityListener;
 import com.pseudonova.saverod.interfaces.IRodService;
 import com.pseudonova.saverod.models.Rod;
+import com.pseudonova.saverod.models.RodInstance;
 import com.pseudonova.saverod.statics.Bootstrapper;
 import com.pseudonova.saverod.statics.NameSpaceCollector;
 import org.bukkit.Bukkit;
@@ -23,6 +24,7 @@ public class SaveRod extends JavaPlugin {
     public void onEnable(){
 
         ConfigurationSerialization.registerClass(Rod.class);
+        ConfigurationSerialization.registerClass(RodInstance.class);
 
         this.bootstrapper = Bootstrapper.getBootstrapper();
         this.bootstrapper.initialize(this);
@@ -30,7 +32,7 @@ public class SaveRod extends JavaPlugin {
         this.nameSpaceCollector = NameSpaceCollector.getInstance();
         this.nameSpaceCollector.initialize(this);
 
-        getCommand("rod").setExecutor(new RodCommand(this.bootstrapper.getRodService()));
+        getCommand("rod").setExecutor(new RodCommand(this.bootstrapper.getRodService(), bootstrapper.getRodInstanceService()));
 
         IRodService rodService = bootstrapper.getRodService();
 
@@ -50,6 +52,6 @@ public class SaveRod extends JavaPlugin {
         if(!rodService.rodExists("koen"))
             rodService.createRod(koen);
 
-        Bukkit.getPluginManager().registerEvents(new AbilityListener(this.bootstrapper.getRodService()), this);
+        Bukkit.getPluginManager().registerEvents(new AbilityListener(this.bootstrapper.getRodService(), bootstrapper.getRodInstanceService()), this);
     }
 }

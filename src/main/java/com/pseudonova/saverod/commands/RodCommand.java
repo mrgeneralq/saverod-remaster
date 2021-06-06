@@ -1,7 +1,9 @@
 package com.pseudonova.saverod.commands;
 
+import com.pseudonova.saverod.interfaces.IRodInstanceService;
 import com.pseudonova.saverod.interfaces.IRodService;
 import com.pseudonova.saverod.models.Rod;
+import com.pseudonova.saverod.models.RodInstance;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -11,9 +13,11 @@ import org.bukkit.entity.Player;
 public class RodCommand implements CommandExecutor {
 
     private final IRodService rodService;
+    private final IRodInstanceService rodInstanceService;
 
-    public RodCommand(IRodService rodService) {
+    public RodCommand(IRodService rodService, IRodInstanceService rodInstanceService) {
         this.rodService = rodService;
+        this.rodInstanceService = rodInstanceService;
     }
 
     @Override
@@ -32,10 +36,11 @@ public class RodCommand implements CommandExecutor {
 
         Rod rod = rodService.getRodByName(subCommand);
 
-        Player player = (Player) sender;
-        player.getInventory().addItem(rod.getItem());
-        player.sendMessage("You got yourself a " + rod.getDisplayName());
+        RodInstance rodInstance = rodInstanceService.getNewInstance(rod);
 
+        Player player = (Player) sender;
+        player.getInventory().addItem(rodService.getRodItem(rodInstance));
+        player.sendMessage("You got yourself a " + rod.getName());
         return true;
     }
 }

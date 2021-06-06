@@ -1,6 +1,8 @@
 package com.pseudonova.saverod.interfaces;
 
 import com.pseudonova.saverod.models.Rod;
+import com.pseudonova.saverod.models.RodInstance;
+import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 
 public interface IRodService {
@@ -9,9 +11,11 @@ public interface IRodService {
 
     boolean rodExists(String name);
 
-    Rod getRod(ItemStack rodItem);
-
     Rod getRodByName(String name);
 
     void createRod(Rod rod);
+
+    RodInstance getInstance(ItemStack item);
+
+    ItemStack getRodItem(RodInstance rodInstance);
 }

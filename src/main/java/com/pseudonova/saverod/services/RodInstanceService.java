@@ -8,6 +8,8 @@ import com.pseudonova.saverod.repositories.RodInstanceRepository;
 
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -35,11 +37,17 @@ public class RodInstanceService implements IRodInstanceService {
 
         RodInstance instance = new RodInstance(rod);
 
-        Map<Ability, Integer> usesLeftMap = rod.getAbilities().stream()
-                .collect(toMap(ability -> ability, Ability::getMaxUses));
+        Map<String, Integer> usesLeftMap = rod.getAbilities().stream()
+                .collect(toMap(Ability::getName, Ability::getMaxUses));
         instance.setUsesLeft(usesLeftMap);
 
-        
+        rodInstanceRepository.addOrUpdate(instance);
+
         return instance;
+    }
+
+    @Override
+    public boolean instanceExists(UUID id) {
+        return rodInstanceRepository.containsKey(id);
     }
 }

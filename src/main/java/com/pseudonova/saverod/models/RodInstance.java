@@ -1,52 +1,56 @@
 package com.pseudonova.saverod.models;
 
-import com.pseudonova.saverod.enums.AbilityType;
-import com.pseudonova.saverod.statics.NameSpaceCollector;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.event.Event;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
+@SuppressWarnings("unchecked")
 public class RodInstance implements ConfigurationSerializable {
 
-    private final UUID instanceID; //unique id
-    private final Rod rod;
-    private Map<Ability, Integer> usesLeft = new HashMap<>();
+    private final UUID instanceID;
+    private final String rodID;
+    private Map<String, Integer> usesLeft;
 
+    public RodInstance(Map<String, Object> map){
+        this.instanceID =  UUID.fromString((String) map.get("id"));
+        this.rodID = (String) map.get("rod");
+        this.usesLeft = (Map<String, Integer>) map.get("uses-left");
+    }
 
     public RodInstance(Rod rod) {
         this.instanceID = UUID.randomUUID();
-        this.rod = rod;
+        this.rodID = rod.getName();
+        this.usesLeft = new HashMap<>();
     }
 
     public UUID getInstanceID() {
         return instanceID;
     }
 
-    public Rod getRod() {
-        return rod;
+    public String getRodID() {
+        return this.rodID;
     }
 
-    public Map<Ability, Integer> getUsesLeft() {
-        return usesLeft;
+    public Integer getUsesLeft(String abilityName) {
+        return usesLeft.get(abilityName);
     }
 
-    public void setUsesLeft(Map<Ability, Integer> usesLeft) {
+    public void setUsesLeft(Map<String, Integer> usesLeft) {
         this.usesLeft = usesLeft;
     }
 
+    //TODO to be moved to RodService
+
+
+
     @Override
     public Map<String, Object> serialize() {
-        return null;
+
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("id", this.instanceID.toString());
+        map.put("rod", this.rodID);
+        map.put("uses-left", this.usesLeft);
+        return map;
     }
-
-
-    //item's data
 
 }
