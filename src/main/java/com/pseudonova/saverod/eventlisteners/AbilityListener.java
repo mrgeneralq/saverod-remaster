@@ -18,11 +18,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class AbilitiesListeners implements Listener
+public class AbilityListener implements Listener
 {
     private final IRodService rodService;
 
-    public AbilitiesListeners(IRodService rodService){
+    public AbilityListener(IRodService rodService){
         this.rodService = rodService;
     }
 
