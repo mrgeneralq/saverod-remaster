@@ -1,8 +1,8 @@
 package com.pseudonova.saverod.models;
 
+import com.google.common.collect.Lists;
 import com.pseudonova.saverod.enums.AbilityType;
 import com.pseudonova.saverod.statics.NameSpaceCollector;
-import org.apache.commons.lang.WordUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -29,23 +29,24 @@ public class Rod implements ConfigurationSerializable {
 
     public Rod(String name) {
         this.name = name;
-        this.displayName = "reetstok";
         this.mustBeHeld = false;
         this.abilities = new ArrayList<>();
+
+        this.displayName = ChatColor.GREEN + "Default rod";
         this.lore = new ArrayList<>();
         this.material = Material.BLAZE_ROD;
     }
 
-    //just a constructor of the object with a map containing the config properties
-
     @SuppressWarnings("unchecked")
     public Rod(Map<String, Object> configObject){
 
-        this.name = (String) configObject.get("name");
-        this.displayName = (String) configObject.get("display-name");
+        this.name = ChatColor.translateAlternateColorCodes('&', (String) configObject.get("name"));
         this.mustBeHeld = (Boolean) configObject.get("must-be-held");
-        this.material = Material.matchMaterial((String) configObject.get("material"));
         this.abilities = (List<Ability>) configObject.get("abilities");
+
+        this.displayName = (String) configObject.get("display-name");
+        this.material = Material.matchMaterial((String) configObject.get("material"));
+        this.lore = (List<String>) configObject.get("lore");
     }
 
     public String getName() {
@@ -84,15 +85,11 @@ public class Rod implements ConfigurationSerializable {
         this.abilities.add(ability);
     }
 
-    public void activateWithin(Event event) {
+    public void handleEvent(Event event) {
 
         this.abilities.stream()
                 .filter(ability -> ability.isSupportedEvent(event))
-                .forEach(ability ->
-                {
-                    Bukkit.broadcastMessage(ability.getName() + " ability was used, inside the rod " + this.name);
-                    ability.activateWithin(event);
-                });
+                .forEach(ability -> ability.handleEvent(event));
     }
 
     public boolean hasInteractiveAbility() {
@@ -108,11 +105,11 @@ public class Rod implements ConfigurationSerializable {
 
     public Map<String, Object> serialize() {
 
-        Map<String, Object> serializedObject = new HashMap<>();
+        Map<String, Object> serializedObject = new LinkedHashMap<>();
 
         serializedObject.put("name", this.name);
-        serializedObject.put("display-name", this.displayName);
         serializedObject.put("must-be-held", this.mustBeHeld);
+        serializedObject.put("display-name", this.displayName);
         serializedObject.put("lore", this.lore);
         serializedObject.put("material", material.toString());
         serializedObject.put("abilities", this.abilities);
@@ -120,19 +117,24 @@ public class Rod implements ConfigurationSerializable {
         return serializedObject;
     }
 
-    public ItemStack getItem(){
+    public ItemStack getItem() {
 
         ItemStack itemStack = new ItemStack(this.material);
 
         ItemMeta meta = itemStack.getItemMeta();
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', this.displayName));
+        meta.setDisplayName(this.displayName);
         meta.getPersistentDataContainer().set(NameSpaceCollector.getInstance().getRodKey(), PersistentDataType.STRING, this.name);
-
-        meta.setLore(this.abilities.stream().map(Ability::getName).collect(Collectors.toList()));
-
+        meta.setLore(getLoreWithAbilities());
         itemStack.setItemMeta(meta);
 
         return itemStack;
+    }
 
+    private List<String> getLoreWithAbilities(){
+        List<String> newLore = new ArrayList<>(this.lore);
+        newLore.add(ChatColor.GRAY + "Abilities(" + ChatColor.GREEN + this.abilities.size() + ChatColor.GRAY + "):");
+        newLore.addAll(this.abilities.stream().map(Ability::getName).map(abilityName -> ChatColor.GREEN + abilityName).collect(Collectors.toList()));
+
+        return newLore;
     }
 }

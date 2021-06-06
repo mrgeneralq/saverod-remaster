@@ -30,8 +30,6 @@ public class FeedAbility extends Ability {
         });
     }
 
-    //if I do something wrong, please tell
-
     public FeedAbility(Map<String, Object> map){
         this((int) map.get("feed-amount"));
     }

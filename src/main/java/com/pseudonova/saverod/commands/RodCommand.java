@@ -2,6 +2,7 @@ package com.pseudonova.saverod.commands;
 
 import com.pseudonova.saverod.interfaces.IRodService;
 import com.pseudonova.saverod.models.Rod;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -25,7 +26,7 @@ public class RodCommand implements CommandExecutor {
         String subCommand = args[0];
 
         if(!rodService.rodExists(subCommand)){
-            sender.sendMessage("Rod does not exist!");
+            sender.sendMessage(ChatColor.RED + "Rod does not exist!");
             return true;
         }
 

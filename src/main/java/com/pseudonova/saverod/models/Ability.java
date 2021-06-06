@@ -27,7 +27,7 @@ public abstract class Ability implements ConfigurationSerializable {
     }
 
     @SuppressWarnings("unchecked") //safe unchecked cast
-    public <E extends Event> void activateWithin(E event) {
+    public <E extends Event> void handleEvent(E event) {
         Consumer<E> handler = (Consumer<E>) this.supportedEvents.get(event.getClass());
         handler.accept(event);
     }
@@ -42,15 +42,5 @@ public abstract class Ability implements ConfigurationSerializable {
 
     public void unsupportEvent(Class<? extends Event> eventClass) {
         this.supportedEvents.remove(eventClass);
-    }
-
-    @Override
-    public Map<String, Object> serialize() {
-        Map<String, Object> map = new HashMap<>();
-
-        map.put("name", this.name);
-        map.put("type", this.type.name());
-
-        return map;
     }
 }

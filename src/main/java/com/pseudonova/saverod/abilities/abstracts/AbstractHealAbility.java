@@ -4,11 +4,12 @@ import com.pseudonova.saverod.enums.AbilityType;
 import com.pseudonova.saverod.models.Ability;
 import org.bukkit.event.entity.EntityDamageEvent;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class AbstractHealAbility extends Ability
 {
-    protected final double healthToHeal; //protected because it's required for serialization
+    private final double healthToHeal;
 
     public AbstractHealAbility(String name, double healthToHeal) {
         super(name, AbilityType.INTERACTIVE);
@@ -30,7 +31,7 @@ public abstract class AbstractHealAbility extends Ability
 
     @Override
     public Map<String, Object> serialize() {
-        Map<String, Object> map = super.serialize();
+        Map<String, Object> map = new HashMap<>();
 
         map.put("health-to-heal", this.healthToHeal);
 

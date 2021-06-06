@@ -29,8 +29,7 @@ public class SaveRod extends JavaPlugin {
         this.nameSpaceCollector = NameSpaceCollector.getInstance();
         this.nameSpaceCollector.initialize(this);
 
-        Bukkit.getPluginCommand("rod").setExecutor(new RodCommand(this.bootstrapper.getRodService()));
-
+        getCommand("rod").setExecutor(new RodCommand(this.bootstrapper.getRodService()));
 
         IRodService rodService = bootstrapper.getRodService();
 
@@ -38,6 +37,7 @@ public class SaveRod extends JavaPlugin {
         Rod rod = new Rod("quinten");
         rod.addAbility(new HealAbility(5.0));
         rod.addAbility(new SaveInventoryAbility());
+        rod.addAbility(new SurviveAbility());
 
         Rod koen = new Rod("koen");
         koen.addAbility(new SurviveAbility());
@@ -48,9 +48,6 @@ public class SaveRod extends JavaPlugin {
 
         if(!rodService.rodExists("koen"))
             rodService.createRod(koen);
-
-        System.out.println(rodService.getRodByName("quinten").serialize());
-        System.out.println(rodService.getRodByName("koen").serialize());
 
         Bukkit.getPluginManager().registerEvents(new AbilitiesListeners(this.bootstrapper.getRodService()), this);
     }
