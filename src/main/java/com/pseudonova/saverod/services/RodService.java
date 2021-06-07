@@ -6,13 +6,9 @@ import com.pseudonova.saverod.interfaces.IRodService;
 import com.pseudonova.saverod.models.Rod;
 import com.pseudonova.saverod.models.RodInstance;
 import com.pseudonova.saverod.repositories.RodRepository;
-import com.pseudonova.saverod.utils.HiddenStringUtils;
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.inventory.ItemFlag;
+import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import java.math.BigInteger;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,6 +16,7 @@ public class RodService implements IRodService
 {
     private final RodRepository rodRepository;
     private final IRodInstanceService rodInstanceService;
+    private static final String ROD_IDENTIFIER = "rod-id: ";
 
     public RodService(SaveRod main , IRodInstanceService rodInstanceService, RodRepository rodRepository) {
         this.rodRepository = rodRepository;
@@ -64,18 +61,16 @@ public class RodService implements IRodService
             return null;
 
         String instanceLine = lore.stream()
-                .filter(line -> line.startsWith("saverod-instance"))
+                .map(ChatColor:: stripColor)
+                .filter(line -> line.startsWith(ROD_IDENTIFIER))
                 .findFirst().orElse(null);
 
         if(instanceLine == null)
             return null;
 
-        String instanceID = instanceLine.replace("saverod-instance:", "");
-        System.out.println("ROD UUID IS == "  + instanceID);
-        UUID convertedID = UUID.fromString(instanceID);
+        String instanceID = instanceLine.replace(ROD_IDENTIFIER, "");
 
-        RodInstance instance = rodInstanceService.getRodInstance(convertedID);
-        return instance;
+        return rodInstanceService.getRodInstance(instanceID);
     }
 
     @Override
@@ -88,7 +83,7 @@ public class RodService implements IRodService
         meta.setDisplayName(rod.getDisplayName());
 
         List<String> lore = rod.getLoreWithAbilities();
-        lore.add("saverod-instance:" + rodInstance.getInstanceID());
+        lore.add(ChatColor.AQUA +ROD_IDENTIFIER + ChatColor.GOLD + rodInstance.getInstanceID());
         meta.setLore(lore);
         itemStack.setItemMeta(meta);
         return itemStack;

@@ -15,10 +15,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.UUID;
+
 public class SaveRod extends JavaPlugin {
 
     private Bootstrapper bootstrapper;
-    private NameSpaceCollector nameSpaceCollector;
 
     @Override
     public void onEnable(){
@@ -28,9 +29,6 @@ public class SaveRod extends JavaPlugin {
 
         this.bootstrapper = Bootstrapper.getBootstrapper();
         this.bootstrapper.initialize(this);
-
-        this.nameSpaceCollector = NameSpaceCollector.getInstance();
-        this.nameSpaceCollector.initialize(this);
 
         getCommand("rod").setExecutor(new RodCommand(this.bootstrapper.getRodService(), bootstrapper.getRodInstanceService()));
 
@@ -53,5 +51,12 @@ public class SaveRod extends JavaPlugin {
             rodService.createRod(koen);
 
         Bukkit.getPluginManager().registerEvents(new AbilityListener(this.bootstrapper.getRodService(), bootstrapper.getRodInstanceService()), this);
+        run();
+    }
+
+    void run(){
+
+       //test codes
+
     }
 }

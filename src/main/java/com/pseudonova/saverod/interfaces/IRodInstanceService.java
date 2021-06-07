@@ -6,8 +6,8 @@ import com.pseudonova.saverod.models.RodInstance;
 import java.util.UUID;
 
 public interface IRodInstanceService {
-    RodInstance getRodInstance(UUID id);
-    void removeRodInstance(UUID id);
+    RodInstance getRodInstance(String id);
+    void removeRodInstance(String id);
     RodInstance getNewInstance(Rod rod);
-    boolean instanceExists(UUID id);
+    boolean instanceExists(String id);
 }

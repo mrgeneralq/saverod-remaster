@@ -1,29 +1,30 @@
 package com.pseudonova.saverod.models;
 
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
-
 import java.util.*;
 
 @SuppressWarnings("unchecked")
 public class RodInstance implements ConfigurationSerializable {
 
-    private final UUID instanceID;
+    private final String instanceID;
     private final String rodID;
     private Map<String, Integer> usesLeft;
 
     public RodInstance(Map<String, Object> map){
-        this.instanceID =  UUID.fromString((String) map.get("id"));
+        this.instanceID = (String) map.get("id");
         this.rodID = (String) map.get("rod");
         this.usesLeft = (Map<String, Integer>) map.get("uses-left");
     }
 
     public RodInstance(Rod rod) {
-        this.instanceID = UUID.randomUUID();
+
+        this.instanceID = UUID.randomUUID().toString().substring(0, 7).replace("-", "");
         this.rodID = rod.getName();
         this.usesLeft = new HashMap<>();
+
     }
 
-    public UUID getInstanceID() {
+    public String getInstanceID() {
         return instanceID;
     }
 
@@ -31,7 +32,9 @@ public class RodInstance implements ConfigurationSerializable {
         return this.rodID;
     }
 
-    public Integer getUsesLeft(String abilityName) {
+    public Integer getUsesLeft(Ability ability) {
+        String abilityName = ability.getName();
+
         return usesLeft.get(abilityName);
     }
 
@@ -47,7 +50,7 @@ public class RodInstance implements ConfigurationSerializable {
     public Map<String, Object> serialize() {
 
         Map<String, Object> map = new LinkedHashMap<>();
-        map.put("id", this.instanceID.toString());
+        map.put("id", this.instanceID);
         map.put("rod", this.rodID);
         map.put("uses-left", this.usesLeft);
         return map;

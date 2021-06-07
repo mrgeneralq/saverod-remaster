@@ -96,6 +96,14 @@ public class Rod implements ConfigurationSerializable {
         return getAbilities(AbilityType.INTERACTIVE).size() == 1;
     }
 
+    public <A extends Ability> A getAbility(Class<A> abilityClass){
+        return this.abilities.stream()
+                .filter(abilityClass::isInstance)
+                .findFirst()
+                .map(abilityClass::cast)
+                .orElse(null);
+    }
+
     public List<Ability> getAbilities(AbilityType type){
 
 

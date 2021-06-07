@@ -1,10 +1,13 @@
 package com.pseudonova.saverod.eventlisteners;
 
+import com.pseudonova.saverod.abilities.SurviveAbility;
 import com.pseudonova.saverod.interfaces.IRodInstanceService;
 import com.pseudonova.saverod.interfaces.IRodService;
 import com.pseudonova.saverod.models.Rod;
 import com.pseudonova.saverod.models.RodInstance;
+import com.pseudonova.saverod.services.RodService;
 import com.pseudonova.saverod.statics.InventoryUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -45,17 +48,26 @@ public class AbilityListener implements Listener
     @EventHandler
     public void onPlayerInteractEvent(PlayerInteractEvent event){
 
-        Player player = event.getPlayer();
+        if(!event.hasItem())
+            return;
 
+        Player player = event.getPlayer();
         ItemStack itemStack = event.getItem();
 
         if(!rodService.isRod(itemStack)){
             player.sendMessage("this is not rod!");
             return;
         }
-
         RodInstance rodInstance = rodService.getInstance(itemStack);
-        player.sendMessage("Uses left: " + rodInstance.getUsesLeft("survive"));
+        Rod rod = rodService.getRodByName(rodInstance.getRodID());
+
+        SurviveAbility surviveAbility = rod.getAbility(SurviveAbility.class);
+
+        if(surviveAbility == null){
+            player.sendMessage(ChatColor.RED + "This rod doesn't have the Survive ability!");
+            return;
+        }
+        player.sendMessage("Uses left: " + rodInstance.getUsesLeft(surviveAbility));
 
 
     }

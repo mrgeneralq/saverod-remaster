@@ -2,7 +2,6 @@ package com.pseudonova.saverod.repositories;
 
 import com.pseudonova.saverod.SaveRod;
 import com.pseudonova.saverod.interfaces.IRepository;
-import com.pseudonova.saverod.models.Rod;
 import com.pseudonova.saverod.models.RodInstance;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -10,9 +9,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.UUID;
 
-public class RodInstanceRepository implements IRepository<UUID, RodInstance> {
+public class RodInstanceRepository implements IRepository<String, RodInstance> {
 
     private final SaveRod main;
     private File rodInstanceFile;
@@ -33,18 +31,18 @@ public class RodInstanceRepository implements IRepository<UUID, RodInstance> {
     }
 
     @Override
-    public boolean containsKey(UUID instanceID) {
+    public boolean containsKey(String instanceID) {
         return rodInstanceConfiguration.contains(getInstancePath(instanceID));
     }
 
     @Override
-    public RodInstance getValue(UUID instanceID) {
+    public RodInstance getValue(String instanceID) {
         return (RodInstance) rodInstanceConfiguration.get(getInstancePath(instanceID));
 
     }
 
     @Override
-    public void remove(UUID instanceID) {
+    public void remove(String instanceID) {
         rodInstanceConfiguration.set(getInstancePath(instanceID), null);
     }
 
@@ -79,7 +77,7 @@ public class RodInstanceRepository implements IRepository<UUID, RodInstance> {
         }
     }
 
-    private String getInstancePath(UUID rodInstanceID){
+    private String getInstancePath(String rodInstanceID){
         return String.format("instances.%s", rodInstanceID);
     }
 
