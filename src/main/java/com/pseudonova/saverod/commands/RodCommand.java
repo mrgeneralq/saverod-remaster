@@ -18,12 +18,10 @@ public class RodCommand implements CommandExecutor {
 
     private final IRodService rodService;
     private final IRodInstanceService rodInstanceService;
-    private final StringAbilityFactory stringAbilityFactory;
 
-    public RodCommand(IRodService rodService, IRodInstanceService rodInstanceService, StringAbilityFactory stringAbilityFactory) {
+    public RodCommand(IRodService rodService, IRodInstanceService rodInstanceService) {
         this.rodService = rodService;
         this.rodInstanceService = rodInstanceService;
-        this.stringAbilityFactory = stringAbilityFactory;
     }
 
     @Override
@@ -64,7 +62,7 @@ public class RodCommand implements CommandExecutor {
                     Ability parsedAbility;
 
                     try{
-                        parsedAbility = this.stringAbilityFactory.parseAbility(parameters);
+                        parsedAbility = StringAbilityFactory.parseAbility(parameters);
                     }
                     catch(StringAbilityFactory.AbilityParseException e){
                         player.sendMessage(ChatColor.RED + "FAILED: " + e.getMessage());

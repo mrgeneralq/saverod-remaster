@@ -5,24 +5,23 @@ import com.pseudonova.saverod.models.Ability;
 
 import java.util.Arrays;
 
-public class StringAbilityFactory {
+public final class StringAbilityFactory {
 
     //Example Input: ["heal", "20", "1"]
-    public Ability parseAbility(String[] parameters) throws AbilityParseException {
-        System.out.println("parameters: " + Arrays.toString(parameters));
+    public static Ability parseAbility(String[] parameters) throws AbilityParseException {
+
         String abilityName = parameters[0];
-        System.out.println("abilityName: " + abilityName);
         String[] creationParameters = Arrays.copyOfRange(parameters, 1, parameters.length);
 
         switch(abilityName.toLowerCase()) {
             case "heal":
-                return newHealAbility(creationParameters);
+                return parseHealAbility(creationParameters);
             default:
                 return null;
         }
     }
 
-    public HealAbility newHealAbility(String[] creationParameters) throws AbilityParseException {
+    public static HealAbility parseHealAbility(String[] creationParameters) throws AbilityParseException {
         verifyParametersAmount("heal", creationParameters, 2);
 
         int healthToHeal = Integer.parseInt(creationParameters[0]);

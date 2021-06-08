@@ -30,9 +30,7 @@ public class SaveRod extends JavaPlugin {
         this.bootstrapper = Bootstrapper.getBootstrapper();
         this.bootstrapper.initialize(this);
 
-        StringAbilityFactory stringAbilityFactory = new StringAbilityFactory();
-
-        getCommand("rod").setExecutor(new RodCommand(this.bootstrapper.getRodService(), bootstrapper.getRodInstanceService(), stringAbilityFactory));
+        getCommand("rod").setExecutor(new RodCommand(this.bootstrapper.getRodService(), bootstrapper.getRodInstanceService()));
 
         IRodService rodService = bootstrapper.getRodService();
 
