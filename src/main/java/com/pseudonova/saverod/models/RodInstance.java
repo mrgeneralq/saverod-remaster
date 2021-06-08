@@ -18,7 +18,7 @@ public class RodInstance implements ConfigurationSerializable {
 
     public RodInstance(Rod rod) {
 
-        this.instanceID = UUID.randomUUID().toString().substring(0, 7).replace("-", "");
+        this.instanceID = createRandomInstanceID();
         this.rodID = rod.getName();
         this.usesLeft = new HashMap<>();
 
@@ -54,6 +54,10 @@ public class RodInstance implements ConfigurationSerializable {
         map.put("rod", this.rodID);
         map.put("uses-left", this.usesLeft);
         return map;
+    }
+
+    private static String createRandomInstanceID(){
+        return UUID.randomUUID().toString().substring(0, 7).replace("-", "");
     }
 
 }

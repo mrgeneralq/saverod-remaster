@@ -13,4 +13,12 @@ public class HealAbility extends AbstractHealAbility
     public HealAbility(Map<String, Object> map){
         this((double) map.get("health-to-heal"), (int) map.get("max-uses"));
     }
+
+    @Override
+    public Map<String, Object> serialize() {
+        Map<String, Object> map = super.serialize();
+        map.put("health-to-heal", this.healthToHeal);
+
+        return map;
+    }
 }

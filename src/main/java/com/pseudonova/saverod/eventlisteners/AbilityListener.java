@@ -55,7 +55,7 @@ public class AbilityListener implements Listener
         ItemStack itemStack = event.getItem();
 
         if(!rodService.isRod(itemStack)){
-            player.sendMessage("this is not rod!");
+            player.sendMessage(ChatColor.RED + "this is not rod!");
             return;
         }
         RodInstance rodInstance = rodService.getInstance(itemStack);

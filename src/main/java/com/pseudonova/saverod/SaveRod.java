@@ -6,16 +6,16 @@ import com.pseudonova.saverod.abilities.HealAbility;
 import com.pseudonova.saverod.abilities.SurviveAbility;
 import com.pseudonova.saverod.commands.RodCommand;
 import com.pseudonova.saverod.eventlisteners.AbilityListener;
+import com.pseudonova.saverod.factories.StringAbilityFactory;
 import com.pseudonova.saverod.interfaces.IRodService;
 import com.pseudonova.saverod.models.Rod;
 import com.pseudonova.saverod.models.RodInstance;
 import com.pseudonova.saverod.statics.Bootstrapper;
-import com.pseudonova.saverod.statics.NameSpaceCollector;
+
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.UUID;
 
 public class SaveRod extends JavaPlugin {
 
@@ -30,25 +30,18 @@ public class SaveRod extends JavaPlugin {
         this.bootstrapper = Bootstrapper.getBootstrapper();
         this.bootstrapper.initialize(this);
 
-        getCommand("rod").setExecutor(new RodCommand(this.bootstrapper.getRodService(), bootstrapper.getRodInstanceService()));
+        StringAbilityFactory stringAbilityFactory = new StringAbilityFactory();
+
+        getCommand("rod").setExecutor(new RodCommand(this.bootstrapper.getRodService(), bootstrapper.getRodInstanceService(), stringAbilityFactory));
 
         IRodService rodService = bootstrapper.getRodService();
 
         //create test rods
         Rod rod = new Rod("quinten");
-        rod.addAbility(new HealAbility(5.0, 5));
         rod.addAbility(new SaveInventoryAbility(5));
-        rod.addAbility(new SurviveAbility(4));
-
-        Rod koen = new Rod("koen");
-        koen.addAbility(new SurviveAbility(6));
-
 
         if(!rodService.rodExists("quinten"))
             rodService.createRod(rod);
-
-        if(!rodService.rodExists("koen"))
-            rodService.createRod(koen);
 
         Bukkit.getPluginManager().registerEvents(new AbilityListener(this.bootstrapper.getRodService(), bootstrapper.getRodInstanceService()), this);
         run();

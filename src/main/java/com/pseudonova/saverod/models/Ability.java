@@ -5,6 +5,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.event.Event;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -46,13 +47,15 @@ public abstract class Ability implements ConfigurationSerializable {
         this.supportedEvents.remove(eventClass);
     }
 
-    public Map<String, Object> serialize() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("max-uses", this.maxUses);
-        return map;
-    }
 
     public int getMaxUses(){
         return this.maxUses;
+    }
+
+    @Override
+    public Map<String, Object> serialize() {
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("max-uses", this.maxUses);
+        return map;
     }
 }

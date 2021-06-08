@@ -3,7 +3,6 @@ package com.pseudonova.saverod.statics;
 import com.pseudonova.saverod.SaveRod;
 import com.pseudonova.saverod.interfaces.IRodInstanceService;
 import com.pseudonova.saverod.interfaces.IRodService;
-import com.pseudonova.saverod.models.Rod;
 import com.pseudonova.saverod.repositories.RodInstanceRepository;
 import com.pseudonova.saverod.repositories.RodRepository;
 import com.pseudonova.saverod.services.RodInstanceService;
@@ -40,7 +39,7 @@ public class Bootstrapper {
         this.rodInstanceService = new RodInstanceService(this.rodInstanceRepository);
 
         this.rodRepository = new RodRepository(main);
-        this.rodService = new RodService(main, this.rodInstanceService, this.rodRepository);
+        this.rodService = new RodService(this.rodInstanceService, this.rodRepository);
 
     }
 

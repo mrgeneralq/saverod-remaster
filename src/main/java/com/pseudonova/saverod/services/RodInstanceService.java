@@ -7,7 +7,6 @@ import com.pseudonova.saverod.models.RodInstance;
 import com.pseudonova.saverod.repositories.RodInstanceRepository;
 
 import java.util.Map;
-import java.util.UUID;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -36,10 +35,11 @@ public class RodInstanceService implements IRodInstanceService {
         RodInstance instance = null;
 
         do{
+            //add the random ID to the constructor, so this loop creates the ID and not the Object
+            //this helps with modularity + more efficient
             instance = new RodInstance(rod);
         }
         while(instanceExists(instance.getInstanceID()));
-
 
 
         Map<String, Integer> usesLeftMap = rod.getAbilities().stream()

@@ -1,17 +1,11 @@
 package com.pseudonova.saverod.models;
 
-import com.google.common.collect.Lists;
 import com.pseudonova.saverod.enums.AbilityType;
-import com.pseudonova.saverod.statics.NameSpaceCollector;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.event.Event;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -106,7 +100,6 @@ public class Rod implements ConfigurationSerializable {
 
     public List<Ability> getAbilities(AbilityType type){
 
-
         return this.abilities.stream()
                 .filter(ability -> ability.getType() == type)
                 .collect(Collectors.toList());
@@ -116,6 +109,7 @@ public class Rod implements ConfigurationSerializable {
         return this.abilities;
     }
 
+    @Override
     public Map<String, Object> serialize() {
 
         Map<String, Object> serializedObject = new LinkedHashMap<>();
@@ -128,26 +122,5 @@ public class Rod implements ConfigurationSerializable {
         serializedObject.put("abilities", this.abilities);
 
         return serializedObject;
-    }
-
-    public ItemStack getItem() {
-
-        ItemStack itemStack = new ItemStack(this.material);
-
-        ItemMeta meta = itemStack.getItemMeta();
-        meta.setDisplayName(this.displayName);
-        meta.getPersistentDataContainer().set(NameSpaceCollector.getInstance().getRodKey(), PersistentDataType.STRING, this.name);
-        meta.setLore(getLoreWithAbilities());
-        itemStack.setItemMeta(meta);
-
-        return itemStack;
-    }
-
-    public List<String> getLoreWithAbilities(){
-        List<String> newLore = new ArrayList<>(this.lore);
-        newLore.add(ChatColor.GRAY + "Abilities(" + ChatColor.GREEN + this.abilities.size() + ChatColor.GRAY + "):");
-        newLore.addAll(this.abilities.stream().map(Ability::getName).map(abilityName -> ChatColor.GREEN + abilityName).collect(Collectors.toList()));
-
-        return newLore;
     }
 }
