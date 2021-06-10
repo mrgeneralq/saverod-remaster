@@ -3,6 +3,7 @@ package com.pseudonova.saverod.eventlisteners;
 import com.pseudonova.saverod.abilities.SurviveAbility;
 import com.pseudonova.saverod.interfaces.IRodInstanceService;
 import com.pseudonova.saverod.interfaces.IRodService;
+import com.pseudonova.saverod.models.Ability;
 import com.pseudonova.saverod.models.Rod;
 import com.pseudonova.saverod.models.RodInstance;
 import com.pseudonova.saverod.statics.InventoryUtils;
@@ -28,9 +29,11 @@ import static java.util.stream.Collectors.toList;
 public class AbilityListener implements Listener
 {
     private final IRodService rodService;
+    private final IRodInstanceService rodInstanceService;
 
-    public AbilityListener(IRodService rodService){
+    public AbilityListener(IRodService rodService, IRodInstanceService rodInstanceService){
         this.rodService = rodService;
+        this.rodInstanceService = rodInstanceService;
     }
 
     @EventHandler
@@ -51,20 +54,25 @@ public class AbilityListener implements Listener
 
         ItemStack itemStack = event.getItem();
 
-        if(!rodService.isRod(itemStack))
+        if(!rodInstanceService.isRod(itemStack))
             return;
 
-        RodInstance rodInstance = rodService.getInstance(itemStack);
-        Rod rod = rodService.getRodByName(rodInstance.getRodID());
+        RodInstance rodInstance = rodInstanceService.getInstance(itemStack);
+        SurviveAbility surviveAbility = rodInstance.getRod().getAbility(SurviveAbility.class);
 
-        SurviveAbility surviveAbility = rod.getAbility(SurviveAbility.class);
         Player player = event.getPlayer();
 
         if(surviveAbility == null){
             player.sendMessage(ChatColor.RED + "This rod doesn't have the Survive ability!");
             return;
         }
-        player.sendMessage("Uses left: " + rodInstance.getUsesLeft(surviveAbility));
+        rodInstance.reduceUsesleft(surviveAbility);
+        rodInstanceService.updateInstance(rodInstance);
+
+        //pseudo code
+        itemStack.getItemMeta().setLore(rodInstance.getLoreWithAbilities());
+
+        player.sendMessage("Uses left: " + rodInstance.getUsesLeft(surviveAbility) + "of the " + rodInstance.getRod().getAbility(SurviveAbility.class).getMaxUses());
 
 
     }
@@ -85,8 +93,8 @@ public class AbilityListener implements Listener
     private List<Rod> getRodsIn(Inventory inventory){
 
         return InventoryUtils.itemsStream(inventory)
-                .filter(this.rodService::isRod) //keep only rod items
-                .map(this.rodService::getInstance) //get the RodInstance object from the item
+                .filter(this.rodInstanceService::isRod) //keep only rod items
+                .map(this.rodInstanceService::getInstance) //get the RodInstance object from the item
                 .map(RodInstance::getRodID) //get the Rod's name from the RodInstance
                 .map(this.rodService::getRodByName)
                 .collect(toList());

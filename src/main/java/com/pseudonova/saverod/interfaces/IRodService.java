@@ -7,15 +7,10 @@ import org.bukkit.inventory.ItemStack;
 
 public interface IRodService {
 
-    boolean isRod(ItemStack item);
-
     boolean rodExists(String name);
 
     Rod getRodByName(String name);
 
     void createRod(Rod rod);
 
-    RodInstance getInstance(ItemStack item);
-
-    ItemStack getRodItem(RodInstance rodInstance);
 }

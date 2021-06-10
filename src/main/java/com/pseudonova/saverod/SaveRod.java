@@ -38,13 +38,20 @@ public class SaveRod extends JavaPlugin {
 
         //create test rods
         Rod rod = new Rod("quinten");
-        rod.addAbility(new SaveInventoryAbility(5));
+        rod.addPassiveAbility(new SaveInventoryAbility(5));
+        rod.addPassiveAbility(new SurviveAbility(5));
+        rod.setPrimaryAbility(new HealAbility(5,5));
+        rod.setSecondaryAbility(new FeedAbility(5,2));
+
 
         if(!rodService.rodExists("quinten"))
             rodService.createRod(rod);
 
-        Bukkit.getPluginManager().registerEvents(new AbilityListener(this.bootstrapper.getRodService()), this);
+        Bukkit.getPluginManager().registerEvents(new AbilityListener(this.bootstrapper.getRodService(), this.bootstrapper.getRodInstanceService()), this);
         run();
+
+
+
     }
 
     void run(){

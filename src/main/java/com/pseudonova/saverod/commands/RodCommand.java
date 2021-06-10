@@ -43,7 +43,8 @@ public class RodCommand implements CommandExecutor {
                 RodInstance rodInstance = rodInstanceService.getNewInstance(rod);
 
 
-                player.getInventory().addItem(rodService.getRodItem(rodInstance));
+
+                player.getInventory().addItem(rodInstance.getItem());
                 player.sendMessage(ChatColor.WHITE + "You got yourself a magical " + ChatColor.AQUA + rod.getName());
                 return true;
             }
@@ -68,9 +69,12 @@ public class RodCommand implements CommandExecutor {
                         player.sendMessage(ChatColor.RED + "FAILED: " + e.getMessage());
                         return true;
                     }
-                    rod.addAbility(parsedAbility);
+                    rod.addPassiveAbility(parsedAbility);
                     player.sendMessage(ChatColor.WHITE + "The Rod " + ChatColor.GREEN + rod.getName() + ChatColor.WHITE + " received the " + ChatColor.YELLOW + parsedAbility.getName() + ChatColor.WHITE + "!");
-                    player.getInventory().addItem(this.rodService.getRodItem(rodInstanceService.getNewInstance(rod)));
+
+                    RodInstance rodInstance = rodInstanceService.getNewInstance(rod);
+                    player.getInventory().addItem(rodInstance.getItem());
+
                 }
         }
         return true;

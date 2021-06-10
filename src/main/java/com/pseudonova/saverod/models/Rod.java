@@ -14,7 +14,10 @@ public class Rod implements ConfigurationSerializable {
 
     private final String name;
     private final boolean mustBeHeld;
-    private final List<Ability> abilities;
+
+    private Ability primaryAbility;
+    private Ability secondaryAbility;
+    private final List<Ability> passiveAbilities;
 
     //item's data
     private String displayName;
@@ -24,7 +27,9 @@ public class Rod implements ConfigurationSerializable {
     public Rod(String name) {
         this.name = name;
         this.mustBeHeld = false;
-        this.abilities = new ArrayList<>();
+
+
+        this.passiveAbilities = new ArrayList<>();
 
         this.displayName = ChatColor.GREEN + name;
         this.lore = new ArrayList<>();
@@ -36,7 +41,11 @@ public class Rod implements ConfigurationSerializable {
 
         this.name = ChatColor.translateAlternateColorCodes('&', (String) configObject.get("name"));
         this.mustBeHeld = (Boolean) configObject.get("must-be-held");
-        this.abilities = (List<Ability>) configObject.get("abilities");
+
+        //abilities
+        this.primaryAbility = (Ability) configObject.get("primary-ability");
+        this.secondaryAbility = (Ability) configObject.get("secondary-ability");
+        this.passiveAbilities = (List<Ability>) configObject.get("passive-abilities");
 
         this.displayName = (String) configObject.get("display-name");
         this.material = Material.matchMaterial((String) configObject.get("material"));
@@ -75,38 +84,46 @@ public class Rod implements ConfigurationSerializable {
         this.lore = lore;
     }
 
-    public void addAbility(Ability ability){
-        this.abilities.add(ability);
+    public void addPassiveAbility(Ability ability){
+        this.passiveAbilities.add(ability);
     }
 
     public void handleEvent(Event event) {
 
-        this.abilities.stream()
+        this.passiveAbilities.stream()
                 .filter(ability -> ability.isSupportedEvent(event))
                 .forEach(ability -> ability.handleEvent(event));
     }
 
     public boolean hasInteractiveAbility() {
-        return getAbilities(AbilityType.INTERACTIVE).size() == 1;
+        return getPassiveAbilities(AbilityType.INTERACTIVE).size() == 1;
     }
 
     public <A extends Ability> A getAbility(Class<A> abilityClass){
-        return this.abilities.stream()
+        return this.passiveAbilities.stream()
                 .filter(abilityClass::isInstance)
                 .findFirst()
                 .map(abilityClass::cast)
                 .orElse(null);
     }
 
-    public List<Ability> getAbilities(AbilityType type){
+    public List<Ability> getPassiveAbilities(AbilityType type){
 
-        return this.abilities.stream()
+        return this.passiveAbilities.stream()
                 .filter(ability -> ability.getType() == type)
                 .collect(Collectors.toList());
     }
 
-    public List<Ability> getAbilities(){
-        return this.abilities;
+    public List<Ability> getPassiveAbilities(){
+        return this.passiveAbilities;
+    }
+
+    public void setPrimaryAbility(Ability primaryAbility) {
+        this.primaryAbility = primaryAbility;
+    }
+
+    public void setSecondaryAbility(Ability secondaryAbility) {
+        this.secondaryAbility = secondaryAbility;
     }
 
     @Override
@@ -119,8 +136,32 @@ public class Rod implements ConfigurationSerializable {
         serializedObject.put("display-name", this.displayName);
         serializedObject.put("lore", this.lore);
         serializedObject.put("material", material.toString());
-        serializedObject.put("abilities", this.abilities);
+        serializedObject.put("passive-abilities", this.passiveAbilities);
+        serializedObject.put("primary-ability", this.primaryAbility);
+        serializedObject.put("secondary-ability", this.secondaryAbility);
 
         return serializedObject;
+    }
+
+    @Override
+    public String toString() {
+        return "Rod{" +
+                "name='" + name + '\'' +
+                ", mustBeHeld=" + mustBeHeld +
+                ", primaryAbility=" + primaryAbility +
+                ", secondaryAbility=" + secondaryAbility +
+                ", passiveAbilities=" + passiveAbilities +
+                ", displayName='" + displayName + '\'' +
+                ", material=" + material +
+                ", lore=" + lore +
+                '}';
+    }
+
+    public Ability getPrimaryAbility() {
+        return primaryAbility;
+    }
+
+    public Ability getSecondaryAbility() {
+        return secondaryAbility;
     }
 }

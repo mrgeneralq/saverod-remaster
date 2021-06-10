@@ -35,11 +35,11 @@ public class Bootstrapper {
     public void initialize(SaveRod main){
         this.main = main;
 
-        this.rodInstanceRepository = new RodInstanceRepository(main);
-        this.rodInstanceService = new RodInstanceService(this.rodInstanceRepository);
-
         this.rodRepository = new RodRepository(main);
-        this.rodService = new RodService(this.rodInstanceService, this.rodRepository);
+        this.rodService = new RodService(this.rodRepository);
+
+        this.rodInstanceRepository = new RodInstanceRepository(main);
+        this.rodInstanceService = new RodInstanceService(this.rodService,this.rodInstanceRepository);
 
     }
 
