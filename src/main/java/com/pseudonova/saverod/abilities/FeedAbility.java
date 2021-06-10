@@ -5,7 +5,6 @@ import com.pseudonova.saverod.models.Ability;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class FeedAbility extends Ability {

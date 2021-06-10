@@ -19,6 +19,7 @@ public abstract class Ability implements ConfigurationSerializable {
         this.name = name;
         this.type = type;
         this.maxUses = maxUses;
+
     }
 
     public String getName() {
