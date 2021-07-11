@@ -1,18 +1,19 @@
 package com.pseudonova.saverod.models;
-
-import com.pseudonova.saverod.utils.StringUtils;
+import com.pseudonova.saverod.persistentdatatypes.RodInstanceType;
+import com.pseudonova.saverod.statics.NamespaceKeyContainer;
 import org.bukkit.ChatColor;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("unchecked")
+
 public class RodInstance implements ConfigurationSerializable {
 
     public static final String ROD_IDENTIFIER = "rod-id: ";
+    private final static NamespacedKey ROD_INSTANCE_KEY = NamespaceKeyContainer.getContainer().getRodInstanceKey();
+    private final static RodInstanceType ROD_INSTANCE_TYPE = new RodInstanceType();
 
     private final String instanceID;
 
@@ -21,6 +22,7 @@ public class RodInstance implements ConfigurationSerializable {
 
     private Map<String, Integer> usesLeft;
 
+    @SuppressWarnings("unchecked") //this constructor takes values from the config, so the casts are safe
     public RodInstance(Map<String, Object> map){
         this.instanceID = (String) map.get("id");
         this.rodID = (String) map.get("rodID");
@@ -31,6 +33,7 @@ public class RodInstance implements ConfigurationSerializable {
 
         this.instanceID = createRandomInstanceID();
         this.rodID = rod.getName();
+        this.rod = rod;
         this.usesLeft = new HashMap<>();
 
     }
@@ -86,20 +89,6 @@ public class RodInstance implements ConfigurationSerializable {
         this.rodID = rod.getName();
     }
 
-    public ItemStack getItem() {
-
-        ItemStack itemStack = new ItemStack(rod.getMaterial());
-
-        ItemMeta meta = itemStack.getItemMeta();
-        meta.setDisplayName(rod.getDisplayName());
-
-        List<String> lore = getLoreWithAbilities();
-        lore.add(ChatColor.AQUA + ROD_IDENTIFIER + ChatColor.GOLD + this.getInstanceID());
-        meta.setLore(lore);
-        itemStack.setItemMeta(meta);
-        return itemStack;
-
-    }
 
     public List<String> getLoreWithAbilities(){
 

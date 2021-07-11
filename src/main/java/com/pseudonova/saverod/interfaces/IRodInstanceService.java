@@ -5,14 +5,15 @@ import com.pseudonova.saverod.models.RodInstance;
 import org.bukkit.inventory.ItemStack;
 
 public interface IRodInstanceService {
-    RodInstance getRodInstance(String id);
-    void removeRodInstance(String id);
+    RodInstance getRodInstance(ItemStack itemStack);
+    void removeRodInstance(ItemStack itemStack);
     RodInstance getNewInstance(Rod rod);
-    void updateInstance(RodInstance instance);
+    void updateInstance(ItemStack itemStack);
 
     boolean isRod(ItemStack item);
 
-    boolean instanceExists(String id);
+    boolean instanceExists(ItemStack item);
 
     RodInstance getInstance(ItemStack item);
+    ItemStack getItem(RodInstance instance);
 }

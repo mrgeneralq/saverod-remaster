@@ -5,9 +5,13 @@ import com.pseudonova.saverod.interfaces.IRodService;
 import com.pseudonova.saverod.models.Ability;
 import com.pseudonova.saverod.models.Rod;
 import com.pseudonova.saverod.models.RodInstance;
-import com.pseudonova.saverod.repositories.RodInstanceRepository;
+import com.pseudonova.saverod.persistentdatatypes.RodInstanceType;
+import com.pseudonova.saverod.statics.NamespaceKeyContainer;
 import org.bukkit.ChatColor;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
 import java.util.Map;
@@ -16,59 +20,51 @@ import static java.util.stream.Collectors.toMap;
 
 public class RodInstanceService implements IRodInstanceService {
 
-    private final RodInstanceRepository rodInstanceRepository;
-    private final IRodService rodService;
 
-    public RodInstanceService(IRodService rodService, RodInstanceRepository rodInstanceRepository) {
+    private final static RodInstanceType ROD_INSTANCE_TYPE = new RodInstanceType();
+    private final IRodService rodService;
+    private final static NamespacedKey ROD_INSTANCE_KEY = NamespaceKeyContainer.getContainer().getRodInstanceKey();
+
+    public RodInstanceService(IRodService rodService) {
         this.rodService = rodService;
-        this.rodInstanceRepository = rodInstanceRepository;
     }
 
     @Override
-    public RodInstance getRodInstance(String id) {
+    public RodInstance getRodInstance(ItemStack itemStack) {
 
-        RodInstance rodInstance = rodInstanceRepository.getValue(id);
+        RodInstance rodInstance = this.getInstanceFromItemStack(itemStack);
 
         Rod rod = rodService.getRodByName(rodInstance.getRodID());
 
         System.out.println(rod.toString());
-
         rodInstance.setRod(rod);
 
         return rodInstance;
     }
 
+
     @Override
-    public void removeRodInstance(String id) {
-        rodInstanceRepository.remove(id);
+    public void removeRodInstance(ItemStack item) {
+        removeRodInstanceFromItemStack(item);
     }
 
     @Override
     public RodInstance getNewInstance(Rod rod) {
 
-        RodInstance instance = null;
-
-        do {
-            //add the random ID to the constructor, so this loop creates the ID and not the Object
-            //this helps with modularity + more efficient
-            instance = new RodInstance(rod);
-        }
-        while (instanceExists(instance.getInstanceID()));
-
+        RodInstance instance = new RodInstance(rod);
         instance.setRod(rod);
 
         Map<String, Integer> usesLeftMap = rod.getPassiveAbilities().stream()
                 .collect(toMap(Ability::getName, Ability::getMaxUses));
         instance.setUsesLeft(usesLeftMap);
 
-        rodInstanceRepository.addOrUpdate(instance);
-
         return instance;
     }
 
     @Override
-    public void updateInstance(RodInstance instance) {
-        this.rodInstanceRepository.addOrUpdate(instance);
+    public void updateInstance(ItemStack itemStack) {
+        RodInstance instance = this.getInstanceFromItemStack(itemStack);
+        this.setRodInstance(itemStack, instance);
     }
 
     @Override
@@ -81,8 +77,8 @@ public class RodInstanceService implements IRodInstanceService {
     }
 
     @Override
-    public boolean instanceExists(String id) {
-        return rodInstanceRepository.containsKey(id);
+    public boolean instanceExists(ItemStack item) {
+        return getInstanceFromItemStack(item) != null;
     }
 
 
@@ -92,32 +88,43 @@ public class RodInstanceService implements IRodInstanceService {
         if (!item.hasItemMeta())
             return null;
 
-
-        if (!item.getItemMeta().hasLore())
+        if(!item.getItemMeta().getPersistentDataContainer().has(ROD_INSTANCE_KEY, ROD_INSTANCE_TYPE))
             return null;
 
-        List<String> lore = item.getItemMeta().getLore();
+        RodInstance instance = item.getItemMeta().getPersistentDataContainer().get(ROD_INSTANCE_KEY, ROD_INSTANCE_TYPE);
+        return instance;
 
-        if (lore.isEmpty())
-            return null;
+    }
 
-        String instanceLine = lore.stream()
-                .map(ChatColor::stripColor)
-                .filter(line -> line.startsWith(RodInstance.ROD_IDENTIFIER))
-                .findFirst()
-                .orElse(null);
+    @Override
+    public ItemStack getItem(RodInstance instance) {
+        ItemStack itemStack = new ItemStack(instance.getRod().getMaterial());
 
-        if (instanceLine == null)
-            return null;
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.setDisplayName(instance.getRod().getDisplayName());
 
-        String instanceID = instanceLine.replace(RodInstance.ROD_IDENTIFIER, "");
+        List<String> lore = instance.getLoreWithAbilities();
+        meta.setLore(lore);
+
+        itemStack.setItemMeta(meta);
+        setRodInstance(itemStack, instance);
+
+        return itemStack;
+    }
+
+    private RodInstance getInstanceFromItemStack(ItemStack item){
+        return item.getItemMeta().getPersistentDataContainer().get(ROD_INSTANCE_KEY, ROD_INSTANCE_TYPE);
+    }
 
 
-        RodInstance rodInstance = rodInstanceRepository.getValue(instanceID);
-        Rod rod = rodService.getRodByName(rodInstance.getRodID());
-        rodInstance.setRod(rod);
+    private void removeRodInstanceFromItemStack(ItemStack itemStack){
+        itemStack.getItemMeta().getPersistentDataContainer().remove(ROD_INSTANCE_KEY);
+    }
 
-        return rodInstance;
+    private void setRodInstance(ItemStack itemStack, RodInstance instance){
 
+        System.out.println("aaaa:  " + instance.getInstanceID());
+
+      itemStack.getItemMeta().getPersistentDataContainer().set(ROD_INSTANCE_KEY, ROD_INSTANCE_TYPE, instance);
     }
 }

@@ -67,7 +67,7 @@ public class AbilityListener implements Listener
             return;
         }
         rodInstance.reduceUsesleft(surviveAbility);
-        rodInstanceService.updateInstance(rodInstance);
+        rodInstanceService.updateInstance(itemStack);
 
         //pseudo code
         itemStack.getItemMeta().setLore(rodInstance.getLoreWithAbilities());
