@@ -17,7 +17,7 @@ public class RodInstance implements ConfigurationSerializable {
 
     private final String instanceID;
 
-    private Rod rod;
+    private transient Rod rod;
     private String rodID;
 
     private Map<String, Integer> usesLeft;

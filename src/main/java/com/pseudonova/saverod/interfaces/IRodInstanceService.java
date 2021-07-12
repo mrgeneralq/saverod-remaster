@@ -11,9 +11,6 @@ public interface IRodInstanceService {
     void updateInstance(ItemStack itemStack);
 
     boolean isRod(ItemStack item);
-
-    boolean instanceExists(ItemStack item);
-
     RodInstance getInstance(ItemStack item);
     ItemStack getItem(RodInstance instance);
 }
