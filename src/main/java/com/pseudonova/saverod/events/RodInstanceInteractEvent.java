@@ -1,9 +1,8 @@
 package com.pseudonova.saverod.events;
-import com.pseudonova.saverod.interfaces.SaveRodEvent;
 import com.pseudonova.saverod.models.RodInstance;
 import org.bukkit.entity.Player;
 
-public class RodInstanceInteractEvent implements SaveRodEvent {
+public class RodInstanceInteractEvent extends SaveRodEvent {
 
     private final RodInstance rodInstance;
     private final Player player;

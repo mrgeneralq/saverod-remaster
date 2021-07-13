@@ -6,12 +6,10 @@ import com.pseudonova.saverod.interfaces.IRodService;
 import com.pseudonova.saverod.models.Ability;
 import com.pseudonova.saverod.models.Rod;
 import com.pseudonova.saverod.models.RodInstance;
-import com.pseudonova.saverod.persistentdatatypes.RodInstanceType;
 import com.pseudonova.saverod.statics.NamespaceKeyContainer;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
@@ -34,20 +32,13 @@ public class RodInstanceService implements IRodInstanceService {
     @Override
     public RodInstance getRodInstance(ItemStack itemStack) {
 
-        //TODO
-        /*
         RodInstance rodInstance = this.getInstanceFromItemStack(itemStack);
 
         Rod rod = rodService.getRodByName(rodInstance.getRodID());
-
-        System.out.println(rod.toString());
         rodInstance.setRod(rod);
 
         return rodInstance;
 
-         */
-
-        return null;
     }
 
 
@@ -72,12 +63,9 @@ public class RodInstanceService implements IRodInstanceService {
     @Override
     public void updateInstance(ItemStack itemStack) {
 
-      //TODO
-        /*
         RodInstance instance = this.getInstanceFromItemStack(itemStack);
         this.setRodInstance(itemStack, instance);
 
-         */
     }
 
     @Override
@@ -92,18 +80,7 @@ public class RodInstanceService implements IRodInstanceService {
 
     @Override
     public RodInstance getInstance(ItemStack item) {
-
-        if (!item.hasItemMeta())
-            return null;
-
-        if(!item.getItemMeta().getPersistentDataContainer().has(ROD_INSTANCE_KEY, PersistentDataType.STRING))
-            return null;
-
-        String instanceJson = item.getItemMeta().getPersistentDataContainer().get(ROD_INSTANCE_KEY, PersistentDataType.STRING);
-        RodInstance rodInstance = GSON.fromJson(instanceJson, RodInstance.class);
-        rodInstance.setRod(this.rodService.getRodByName(rodInstance.getRodID()));
-
-        return rodInstance;
+        return this.getInstanceFromItemStack(item);
     }
 
     @Override
@@ -134,6 +111,26 @@ public class RodInstanceService implements IRodInstanceService {
         ItemMeta meta = itemStack.getItemMeta();
         meta.getPersistentDataContainer().set(ROD_INSTANCE_KEY, PersistentDataType.STRING, instanceJson);
         itemStack.setItemMeta(meta);
+
+    }
+
+    /*
+    reusable method for retrieving the RodInstance
+     */
+
+    private RodInstance getInstanceFromItemStack(ItemStack item){
+
+        ItemMeta meta = item.getItemMeta();
+        if(item.getItemMeta().getPersistentDataContainer().has(ROD_INSTANCE_KEY, PersistentDataType.STRING))
+            return null;
+
+        String instanceJson = meta.getPersistentDataContainer().get(ROD_INSTANCE_KEY, PersistentDataType.STRING);
+
+        RodInstance instance = GSON.fromJson(instanceJson, RodInstance.class);
+        Rod rod = this.rodService.getRodByName(instance.getRodID());
+        instance.setRod(rod);
+
+        return instance;
 
     }
 

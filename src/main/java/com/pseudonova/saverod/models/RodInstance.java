@@ -1,15 +1,19 @@
 package com.pseudonova.saverod.models;
+import com.pseudonova.saverod.interfaces.RodInstanceEventListener;
 import com.pseudonova.saverod.persistentdatatypes.RodInstanceType;
 import com.pseudonova.saverod.statics.NamespaceKeyContainer;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 
-public class RodInstance implements ConfigurationSerializable {
+public class RodInstance {
+
+
+    private final List<RodInstanceEventListener> listener = new ArrayList<>();
+
 
     public static final String ROD_IDENTIFIER = "rod-id: ";
     private final static NamespacedKey ROD_INSTANCE_KEY = NamespaceKeyContainer.getContainer().getRodInstanceKey();
@@ -108,7 +112,19 @@ public class RodInstance implements ConfigurationSerializable {
         return newLore;
     }
 
+
+
     public Rod getRod() {
         return rod;
+    }
+
+    @Override
+    public void registerObserver() {
+
+    }
+
+    @Override
+    public void notifyObservers() {
+
     }
 }

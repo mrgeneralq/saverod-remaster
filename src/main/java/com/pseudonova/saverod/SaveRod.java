@@ -25,7 +25,6 @@ public class SaveRod extends JavaPlugin {
     public void onEnable(){
 
         ConfigurationSerialization.registerClass(Rod.class);
-        ConfigurationSerialization.registerClass(RodInstance.class);
         ConfigurationSerialization.registerClass(Ability.class);
 
         this.namespaceKeyContainer = NamespaceKeyContainer.getContainer();
@@ -49,15 +48,5 @@ public class SaveRod extends JavaPlugin {
             rodService.createRod(rod);
 
         Bukkit.getPluginManager().registerEvents(new AbilityListener(this.bootstrapper.getRodService(), this.bootstrapper.getRodInstanceService()), this);
-        run();
-
-
-
-    }
-
-    void run(){
-
-       //test codes
-
     }
 }
