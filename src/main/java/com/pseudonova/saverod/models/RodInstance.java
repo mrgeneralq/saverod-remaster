@@ -1,9 +1,6 @@
 package com.pseudonova.saverod.models;
 import com.pseudonova.saverod.events.RodInstanceUsesReduceEvent;
-import com.pseudonova.saverod.persistentdatatypes.RodInstanceType;
-import com.pseudonova.saverod.statics.NamespaceKeyContainer;
 import org.bukkit.ChatColor;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -12,24 +9,12 @@ import java.util.stream.Collectors;
 
 public class RodInstance {
 
-
-    public static final String ROD_IDENTIFIER = "rod-id: ";
-    private final static NamespacedKey ROD_INSTANCE_KEY = NamespaceKeyContainer.getContainer().getRodInstanceKey();
-    private final static RodInstanceType ROD_INSTANCE_TYPE = new RodInstanceType();
-
     private final String instanceID;
 
     private transient Rod rod;
     private String rodID;
 
     private Map<String, Integer> usesLeft;
-
-    @SuppressWarnings("unchecked") //this constructor takes values from the config, so the casts are safe
-    public RodInstance(Map<String, Object> map){
-        this.instanceID = (String) map.get("id");
-        this.rodID = (String) map.get("rodID");
-        this.usesLeft = (Map<String, Integer>) map.get("uses-left");
-    }
 
     public RodInstance(Rod rod) {
 
@@ -53,7 +38,6 @@ public class RodInstance {
         return usesLeft.get(abilityName);
     }
 
-    //also did this
     public void setUsesLeft(Ability ability, int usesLeft){
         this.usesLeft.put(ability.getName(), usesLeft);
     }
