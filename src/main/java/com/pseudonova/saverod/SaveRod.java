@@ -6,10 +6,11 @@ import com.pseudonova.saverod.abilities.HealAbility;
 import com.pseudonova.saverod.abilities.SurviveAbility;
 import com.pseudonova.saverod.commands.RodCommand;
 import com.pseudonova.saverod.eventlisteners.AbilityListener;
+import com.pseudonova.saverod.eventlisteners.rodinstance.RodInstanceInteractEventListener;
 import com.pseudonova.saverod.interfaces.IRodService;
 import com.pseudonova.saverod.models.Ability;
 import com.pseudonova.saverod.models.Rod;
-import com.pseudonova.saverod.models.RodInstance;
+
 import com.pseudonova.saverod.statics.Bootstrapper;
 import com.pseudonova.saverod.statics.NamespaceKeyContainer;
 import org.bukkit.Bukkit;
@@ -33,8 +34,10 @@ public class SaveRod extends JavaPlugin {
         this.bootstrapper = Bootstrapper.getBootstrapper();
         this.bootstrapper.initialize(this);
 
-        getCommand("rod").setExecutor(new RodCommand(this.bootstrapper.getRodService(), bootstrapper.getRodInstanceService()));
+        //register the event listeners
+        registerEvents();
 
+        getCommand("rod").setExecutor(new RodCommand(this.bootstrapper.getRodService(), bootstrapper.getRodInstanceService()));
         IRodService rodService = bootstrapper.getRodService();
 
         //create test rods
@@ -48,5 +51,9 @@ public class SaveRod extends JavaPlugin {
             rodService.createRod(rod);
 
         Bukkit.getPluginManager().registerEvents(new AbilityListener(this.bootstrapper.getRodService(), this.bootstrapper.getRodInstanceService()), this);
+    }
+
+    private void registerEvents(){
+        Bukkit.getPluginManager().registerEvents(new RodInstanceInteractEventListener(), this);
     }
 }

@@ -1,23 +1,21 @@
 package com.pseudonova.saverod.events;
-import com.pseudonova.saverod.models.RodInstance;
-import org.bukkit.entity.Player;
 
-public class RodInstanceInteractEvent extends SaveRodEvent {
 
-    private final RodInstance rodInstance;
-    private final Player player;
-    //TODO private final InteractionType (primary|secondary) <-----
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
 
-    public RodInstanceInteractEvent(RodInstance rodInstance, Player player) {
-        this.rodInstance = rodInstance;
-        this.player = player;
+public class RodInstanceInteractEvent extends Event {
+
+    private static final HandlerList HANDLERS_LIST = new HandlerList();
+
+    @Override
+    public HandlerList getHandlers() {
+        return HANDLERS_LIST;
     }
 
-    public RodInstance getRodInstance() {
-        return rodInstance;
+    public static HandlerList getHandlerList() {
+        return HANDLERS_LIST;
     }
 
-    public Player getPlayer() {
-        return player;
-    }
+
 }

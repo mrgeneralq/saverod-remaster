@@ -1,18 +1,16 @@
 package com.pseudonova.saverod.models;
-import com.pseudonova.saverod.interfaces.RodInstanceEventListener;
+import com.pseudonova.saverod.events.RodInstanceUsesReduceEvent;
 import com.pseudonova.saverod.persistentdatatypes.RodInstanceType;
 import com.pseudonova.saverod.statics.NamespaceKeyContainer;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 
 public class RodInstance {
-
-
-    private final List<RodInstanceEventListener> listener = new ArrayList<>();
 
 
     public static final String ROD_IDENTIFIER = "rod-id: ";
@@ -64,7 +62,14 @@ public class RodInstance {
         this.usesLeft = usesLeft;
     }
 
-    public void reduceUsesleft(Ability ability){
+    public void reduceUsesleft(Player player, Ability ability){
+
+        RodInstanceUsesReduceEvent event = new RodInstanceUsesReduceEvent(this, ability);
+
+        if(event.isCancelled())
+            return;
+
+        //TODO move to Event Listener
         String abilityName = ability.getName();
 
         if(this.usesLeft.get(abilityName) == 0)
@@ -73,16 +78,6 @@ public class RodInstance {
         this.usesLeft.merge(abilityName, 1, Math::subtractExact);
     }
 
-
-    @Override
-    public Map<String, Object> serialize() {
-
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("id", this.instanceID);
-        map.put("rodID", this.rodID);
-        map.put("uses-left", this.usesLeft);
-        return map;
-    }
 
     private static String createRandomInstanceID(){
         return UUID.randomUUID().toString().substring(0, 7).replace("-", "");
@@ -113,18 +108,8 @@ public class RodInstance {
     }
 
 
-
     public Rod getRod() {
         return rod;
     }
 
-    @Override
-    public void registerObserver() {
-
-    }
-
-    @Override
-    public void notifyObservers() {
-
-    }
 }
