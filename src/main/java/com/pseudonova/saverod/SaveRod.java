@@ -5,8 +5,8 @@ import com.pseudonova.saverod.abilities.SaveInventoryAbility;
 import com.pseudonova.saverod.abilities.HealAbility;
 import com.pseudonova.saverod.abilities.SurviveAbility;
 import com.pseudonova.saverod.commands.RodCommand;
-import com.pseudonova.saverod.eventlisteners.AbilityListener;
-import com.pseudonova.saverod.eventlisteners.rodinstance.RodInstanceInteractEventListener;
+import com.pseudonova.saverod.eventlisteners.AbilityListeners;
+import com.pseudonova.saverod.eventlisteners.rodinstance.AbilityUseListener;
 import com.pseudonova.saverod.interfaces.IRodService;
 import com.pseudonova.saverod.models.Ability;
 import com.pseudonova.saverod.models.Rod;
@@ -50,10 +50,10 @@ public class SaveRod extends JavaPlugin {
         if(!rodService.rodExists("quinten"))
             rodService.createRod(rod);
 
-        Bukkit.getPluginManager().registerEvents(new AbilityListener(this.bootstrapper.getRodService(), this.bootstrapper.getRodInstanceService()), this);
+        Bukkit.getPluginManager().registerEvents(new AbilityListeners(this.bootstrapper.getRodInstanceService()), this);
     }
 
     private void registerEvents(){
-        Bukkit.getPluginManager().registerEvents(new RodInstanceInteractEventListener(), this);
+        Bukkit.getPluginManager().registerEvents(new AbilityUseListener(), this);
     }
 }

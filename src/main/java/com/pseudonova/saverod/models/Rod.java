@@ -1,5 +1,6 @@
 package com.pseudonova.saverod.models;
 
+import com.google.common.collect.Lists;
 import com.pseudonova.saverod.enums.AbilityType;
 
 import org.bukkit.ChatColor;
@@ -27,10 +28,7 @@ public class Rod implements ConfigurationSerializable {
     public Rod(String name) {
         this.name = name;
         this.mustBeHeld = false;
-
-
         this.passiveAbilities = new ArrayList<>();
-
         this.displayName = ChatColor.GREEN + name;
         this.lore = new ArrayList<>();
         this.material = Material.BLAZE_ROD;
@@ -116,6 +114,13 @@ public class Rod implements ConfigurationSerializable {
 
     public List<Ability> getPassiveAbilities(){
         return this.passiveAbilities;
+    }
+
+    public List<Ability> getAbilities(){
+        List<Ability> abilities = Lists.newArrayList(this.primaryAbility, this.secondaryAbility);
+        abilities.addAll(this.passiveAbilities);
+
+        return abilities;
     }
 
     public void setPrimaryAbility(Ability primaryAbility) {
