@@ -1,10 +1,10 @@
 package com.pseudonova.saverod.models;
-import com.pseudonova.saverod.events.RodInstanceUsesReduceEvent;
-import com.pseudonova.saverod.persistentdatatypes.RodInstanceType;
-import com.pseudonova.saverod.statics.NamespaceKeyContainer;
+import com.pseudonova.saverod.events.rodinstance.AbilityUseEvent;
+import com.pseudonova.saverod.events.rodinstance.PreAbilityUseEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -12,36 +12,30 @@ import java.util.stream.Collectors;
 
 public class RodInstance {
 
-
-    public static final String ROD_IDENTIFIER = "rod-id: ";
-    private final static NamespacedKey ROD_INSTANCE_KEY = NamespaceKeyContainer.getContainer().getRodInstanceKey();
-    private final static RodInstanceType ROD_INSTANCE_TYPE = new RodInstanceType();
-
-    private final String instanceID;
-
+    private final String id;
     private transient Rod rod;
     private String rodID;
-
+    private ItemStack rodItem;
     private Map<String, Integer> usesLeft;
 
-    @SuppressWarnings("unchecked") //this constructor takes values from the config, so the casts are safe
-    public RodInstance(Map<String, Object> map){
-        this.instanceID = (String) map.get("id");
-        this.rodID = (String) map.get("rodID");
-        this.usesLeft = (Map<String, Integer>) map.get("uses-left");
-    }
-
-    public RodInstance(Rod rod) {
-
-        this.instanceID = createRandomInstanceID();
-        this.rodID = rod.getName();
+    public RodInstance(Rod rod, String id, ItemStack rodItem) {
+        this.id = id;
         this.rod = rod;
+        this.rodID = rod.getName();
+        this.rodItem = rodItem;
         this.usesLeft = new HashMap<>();
-
     }
 
-    public String getInstanceID() {
-        return instanceID;
+    public ItemStack getRodItem(){
+        return this.rodItem;
+    }
+
+    public String getID(){
+        return this.id;
+    }
+
+    public Rod getRod() {
+        return rod;
     }
 
     public String getRodID() {
@@ -50,37 +44,24 @@ public class RodInstance {
 
     public Integer getUsesLeft(Ability ability) {
         String abilityName = ability.getName();
-        return usesLeft.get(abilityName);
+
+        return usesLeft.getOrDefault(abilityName, 0);
     }
 
-    //also did this
-    public void setUsesLeft(Ability ability, int usesLeft){
+    public void setUsesLeft(Ability ability, int usesLeft) {
         this.usesLeft.put(ability.getName(), usesLeft);
     }
 
-    public void setUsesLeft(Map<String, Integer> usesLeft) {
-        this.usesLeft = usesLeft;
-    }
+    public void use(Ability ability, Player player) {
+        PreAbilityUseEvent preUseEvent = new PreAbilityUseEvent(this, ability, player);
+        Bukkit.getPluginManager().callEvent(preUseEvent);
 
-    public void reduceUsesleft(Player player, Ability ability){
-
-        RodInstanceUsesReduceEvent event = new RodInstanceUsesReduceEvent(this, ability);
-
-        if(event.isCancelled())
+        if(preUseEvent.isCancelled())
             return;
 
-        //TODO move to Event Listener
-        String abilityName = ability.getName();
+        this.usesLeft.merge(ability.getName(), 1, Math::subtractExact);
 
-        if(this.usesLeft.get(abilityName) == 0)
-            return;
-
-        this.usesLeft.merge(abilityName, 1, Math::subtractExact);
-    }
-
-
-    private static String createRandomInstanceID(){
-        return UUID.randomUUID().toString().substring(0, 7).replace("-", "");
+        Bukkit.getPluginManager().callEvent(new AbilityUseEvent(this, ability, player));
     }
 
     public void setRod(Rod rod) {
@@ -106,10 +87,4 @@ public class RodInstance {
 
         return newLore;
     }
-
-
-    public Rod getRod() {
-        return rod;
-    }
-
 }

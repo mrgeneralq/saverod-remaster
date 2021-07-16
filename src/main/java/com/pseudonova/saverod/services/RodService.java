@@ -29,13 +29,12 @@ public class RodService implements IRodService
     }
 
     @Override
-    public void createRod(Rod rod){
+    public void createRod(Rod rod) {
         this.rodRepository.addOrUpdate(rod);
     }
 
 
-    /*
-    @Override
+    /*@Override
     public RodInstance getInstance(ItemStack item) {
         if(!item.hasItemMeta())
             return null;
