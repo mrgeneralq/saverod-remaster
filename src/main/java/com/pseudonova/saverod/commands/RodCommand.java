@@ -2,6 +2,7 @@ package com.pseudonova.saverod.commands;
 
 import com.pseudonova.saverod.abstracts.AbstractCommand;
 import com.pseudonova.saverod.commands.rod.RodCreateCommand;
+import com.pseudonova.saverod.commands.rod.RodRemoveCommand;
 import com.pseudonova.saverod.interfaces.ICommand;
 import com.pseudonova.saverod.interfaces.IRodInstanceService;
 import com.pseudonova.saverod.interfaces.IRodService;
@@ -26,6 +27,7 @@ public class RodCommand extends AbstractCommand {
         this.rodInstanceService = rodInstanceService;
 
         this.subCommands.put("create", new RodCreateCommand(rodService));
+        this.subCommands.put("remove", new RodRemoveCommand(rodService));
 
     }
 
