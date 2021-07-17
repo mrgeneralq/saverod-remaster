@@ -12,14 +12,12 @@ import java.util.stream.Collectors;
 
 public class RodInstance {
 
-    private final String id;
     private transient Rod rod;
     private String rodID;
     private ItemStack rodItem;
     private Map<String, Integer> usesLeft;
 
-    public RodInstance(Rod rod, String id, ItemStack rodItem) {
-        this.id = id;
+    public RodInstance(Rod rod, ItemStack rodItem) {
         this.rod = rod;
         this.rodID = rod.getName();
         this.rodItem = rodItem;
@@ -28,10 +26,6 @@ public class RodInstance {
 
     public ItemStack getRodItem(){
         return this.rodItem;
-    }
-
-    public String getID(){
-        return this.id;
     }
 
     public Rod getRod() {

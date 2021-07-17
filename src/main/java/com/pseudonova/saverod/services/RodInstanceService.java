@@ -48,10 +48,9 @@ public class RodInstanceService implements IRodInstanceService {
     @Override
     public RodInstance getNewInstance(Rod rod) {
 
-        String randomID = UUID.randomUUID().toString().substring(0, 7).replace("-", "");
         ItemStack rodItem = createBaseItem(rod);
 
-        RodInstance rodInstance = new RodInstance(rod, randomID, rodItem);
+        RodInstance rodInstance = new RodInstance(rod, rodItem);
 
         for(Ability ability : rod.getPassiveAbilities())
             rodInstance.setUsesLeft(ability, ability.getMaxUses());

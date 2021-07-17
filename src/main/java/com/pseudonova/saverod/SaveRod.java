@@ -5,6 +5,7 @@ import com.pseudonova.saverod.abilities.SaveInventoryAbility;
 import com.pseudonova.saverod.abilities.HealAbility;
 import com.pseudonova.saverod.abilities.SurviveAbility;
 import com.pseudonova.saverod.commands.RodCommand;
+import com.pseudonova.saverod.commands.SaveRodCommand;
 import com.pseudonova.saverod.eventlisteners.AbilityListeners;
 import com.pseudonova.saverod.eventlisteners.rodinstance.AbilityUseListener;
 import com.pseudonova.saverod.interfaces.IRodService;
@@ -37,7 +38,7 @@ public class SaveRod extends JavaPlugin {
         //register the event listeners
         registerEvents();
 
-        getCommand("rod").setExecutor(new RodCommand(this.bootstrapper.getRodService(), bootstrapper.getRodInstanceService()));
+        getCommand("saverod").setExecutor(new SaveRodCommand(this.bootstrapper.getRodService(), bootstrapper.getRodInstanceService(), this.bootstrapper.getConfigService()));
         IRodService rodService = bootstrapper.getRodService();
 
         //create test rods
@@ -51,6 +52,7 @@ public class SaveRod extends JavaPlugin {
             rodService.createRod(rod);
 
         Bukkit.getPluginManager().registerEvents(new AbilityListeners(this.bootstrapper.getRodInstanceService()), this);
+
     }
 
     private void registerEvents(){
