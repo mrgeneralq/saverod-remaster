@@ -9,29 +9,31 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
 public class RodInstance {
 
-    private final String id;
     private transient Rod rod;
     private String rodID;
     private ItemStack rodItem;
     private Map<String, Integer> usesLeft;
 
-    public RodInstance(Rod rod, String id, ItemStack rodItem) {
-        this.id = id;
+    public RodInstance(Rod rod, ItemStack rodItem) {
         this.rod = rod;
         this.rodID = rod.getName();
         this.rodItem = rodItem;
         this.usesLeft = new HashMap<>();
     }
 
-    public ItemStack getRodItem(){
-        return this.rodItem;
+    public static RodInstance forRod(Rod rod){
+        RodInstance rodInstance =  new RodInstance(rod, rod.getBaseItem());
+
+        for(Ability ability : rod.getPassiveAbilities())
+            rodInstance.setUsesLeft(ability, ability.getMaxUses());
+
+        return rodInstance;
     }
 
-    public String getID(){
-        return this.id;
+    public ItemStack getRodItem(){
+        return this.rodItem;
     }
 
     public Rod getRod() {
@@ -72,14 +74,14 @@ public class RodInstance {
 
     public List<String> getLoreWithAbilities(){
 
-        List<String> newLore = new ArrayList<>(this.rod.getLore());
+        List<String> newLore = new ArrayList<>(this.rod.getBaseItem().getItemMeta().getLore());
         newLore.add("");
 
         //primary ability
         Ability primaryAbility = this.rod.getPrimaryAbility();
 
         if(primaryAbility != null)
-            newLore.add(String.format(ChatColor.GOLD + "Primary Ability: %s " + ChatColor.AQUA + " (%s/%s)",primaryAbility.getName(), this.getUsesLeft(primaryAbility), rod.getPrimaryAbility().getMaxUses()));
+            newLore.add(String.format(ChatColor.GOLD + "Primary Ability: %s " + ChatColor.AQUA + " (%s/%s)",primaryAbility.getName(), getUsesLeft(primaryAbility), this.rod.getPrimaryAbility().getMaxUses()));
 
         newLore.add(ChatColor.GRAY + "Abilities(" + ChatColor.GREEN + this.rod.getPassiveAbilities().size() + ChatColor.GRAY + "):");
 

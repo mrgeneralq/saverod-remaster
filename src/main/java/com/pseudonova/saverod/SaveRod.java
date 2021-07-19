@@ -41,7 +41,7 @@ public class SaveRod extends JavaPlugin {
         IRodService rodService = bootstrapper.getRodService();
 
         //create test rods
-        Rod rod = new Rod("quinten");
+        Rod rod = Rod.createDefault("quinten");
         rod.addPassiveAbility(new SaveInventoryAbility(5));
         rod.addPassiveAbility(new SurviveAbility(5));
         rod.setPrimaryAbility(new HealAbility(5,5));

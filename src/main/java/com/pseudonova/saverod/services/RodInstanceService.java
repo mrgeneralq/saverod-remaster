@@ -47,16 +47,7 @@ public class RodInstanceService implements IRodInstanceService {
 
     @Override
     public RodInstance getNewInstance(Rod rod) {
-
-        String randomID = UUID.randomUUID().toString().substring(0, 7).replace("-", "");
-        ItemStack rodItem = createBaseItem(rod);
-
-        RodInstance rodInstance = new RodInstance(rod, randomID, rodItem);
-
-        for(Ability ability : rod.getPassiveAbilities())
-            rodInstance.setUsesLeft(ability, ability.getMaxUses());
-
-        return rodInstance;
+        return RodInstance.forRod(rod);
     }
 
     @Override
@@ -95,10 +86,10 @@ public class RodInstanceService implements IRodInstanceService {
 
     @Override
     public ItemStack getItem(RodInstance instance) {
-        ItemStack itemStack = new ItemStack(instance.getRod().getMaterial());
+        ItemStack itemStack = new ItemStack(instance.getRod().getBaseItem().getType());
 
         ItemMeta meta = itemStack.getItemMeta();
-        meta.setDisplayName(instance.getRod().getDisplayName());
+        meta.setDisplayName(instance.getRod().getBaseItem().getItemMeta().getDisplayName());
 
         List<String> lore = instance.getLoreWithAbilities();
         meta.setLore(lore);
@@ -118,14 +109,5 @@ public class RodInstanceService implements IRodInstanceService {
         meta.getPersistentDataContainer().set(ROD_INSTANCE_KEY, PersistentDataType.STRING, instanceJson);
         itemStack.setItemMeta(meta);
 
-    }
-
-    private static ItemStack createBaseItem(Rod rod){
-        ItemStack item = new ItemStack(rod.getMaterial());
-        ItemMeta meta = item.getItemMeta();
-        meta.setLore(rod.getLore());
-        item.setItemMeta(meta);
-
-        return item;
     }
 }
